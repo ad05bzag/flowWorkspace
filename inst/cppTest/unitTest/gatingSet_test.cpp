@@ -12,25 +12,18 @@
 #include <boost/serialization/array.hpp>
 #include <boost/math/distributions/normal.hpp>
 
-hdfFlow attachData(string fileName,vector<string> sampleNames,vector<string> params){
-	hdfFlow nc;
-	nc.fileName_set(fileName);
-	nc.params_set(params);
-	nc.sample_set(sampleNames);
-	return nc;
-}
 /*
 	 * plot gating hierarchy tree
 	 */
 
 
-void plotGraph(GatingHierarchy& gh){
+void plotGraph(GatingHierarchy<FRAMETYPE>& gh){
 
 			gh.drawGraph("../output/test.dot");
 			system("dot2gxl ../output/test.dot -o ../output/test.gxl");
 }
 
-void gh_accessor_test(GatingHierarchy& gh){
+void gh_accessor_test(GatingHierarchy<FRAMETYPE>& gh){
 	/*
 		 * getNodes by the T order
 		 */
@@ -122,55 +115,24 @@ void gh_accessor_test(GatingHierarchy& gh){
 			cout<<endl;
 		}
 }
-hdfFlow gs_attachCDF(GatingSet & gs,testCase myTest)
-{
-	string ncFile=myTest.ncfile;
 
-	/*
-	 * get sample names from myTest
-	 */
-	vector<string> params;
-	vector<string> sampleNames;
-	for(map<string,string>::iterator it=myTest.samples.begin();it!=myTest.samples.end();it++)
-		sampleNames.push_back(it->second);
-
-	/*
-	 * read colnames from text
-	 */
-	std::ifstream myfile;
-	myfile.open(myTest.colfile.c_str(),ifstream::in);
-
-	vector<string> myLines;
-	string line;
-	while (std::getline(myfile, line))
-	{
-		params.push_back(line);
-	}
-
-	myfile.close();
-
-	/*
-	 * attach Data source  to gs
-	 */
-	return attachData(ncFile,sampleNames,params);
-}
-void gs_gating(GatingSet &gs,string curSample, hdfFlow nc, map<string,float> &gains){
+void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string,float> &gains){
 	cout<<endl<<"do the gating after the parsing"<<endl;
 
 	//read transformed data once for all nodes
-	GatingHierarchy & gh=gs.getGatingHierarchy(curSample);
+	GatingHierarchy<FRAMETYPE> & gh=gs.getGatingHierarchy(curSample);
 
 //	gh.loadData(curSample);//get flow data from cdf
 
 	/*
 	 * read flow data from cdf into memory first (mimic the R code)
 	 */
-	flowData res=nc.readflowData(curSample);
+	FCS_READ_PARAM config;
 
-	/*
-	 * then load data from memory (as it(res) is passed from R routine
-	 */
-	gh.loadData(res);//
+	MemCytoFrame frm(fcs, config, false);
+
+	gh.setframe(frm);
+	gh.loadData();//
 
 	gh.adjustGate(gains);
 	gh.transformGate();
@@ -181,7 +143,7 @@ void gs_gating(GatingSet &gs,string curSample, hdfFlow nc, map<string,float> &ga
 	gh.unloadData();
 
 }
-void gh_counts(GatingHierarchy & gh,vector<bool> &isEqual, const float tolerance, const vector<VertexID> skipPops){
+void gh_counts(GatingHierarchy<FRAMETYPE> & gh,vector<bool> &isEqual, const float tolerance, const vector<VertexID> skipPops){
 	cout<<endl<<"flowJo(flowcore) counts after gating"<<endl;
 	VertexID_vec vertices=gh.getVertices(0);
 	for(VertexID_vec::iterator it=vertices.begin();it!=vertices.end();it++)
@@ -230,13 +192,13 @@ void gh_counts(GatingHierarchy & gh,vector<bool> &isEqual, const float tolerance
 	}
 }
 
-void gh_removeGate(GatingHierarchy& gh){
+void gh_removeGate(GatingHierarchy<FRAMETYPE>& gh){
 	gh.removeNode(5);
 
 }
 void clone_test(testCase myTest){
 	string archive=myTest.archive;
-	GatingSet *gs=new GatingSet(archive);
+	GatingSet<FRAMETYPE> *gs=new GatingSet<FRAMETYPE>(archive);
 	gs->clone(gs->getSamples());
 
 }
@@ -257,11 +219,11 @@ void parser_test(testCase & myTest){
 	else
 		archiveName = archiveName.append(".dat");
 	unsigned short wsType = myTest.wsType;
-		boost::scoped_ptr<GatingSet> gs;
+		boost::scoped_ptr<GatingSet<FRAMETYPE>> gs;
 		if(isLoadArchive)
 		{
 
-			gs.reset(new GatingSet(archiveName));
+			gs.reset(new GatingSet<FRAMETYPE>(archiveName));
 
 		}
 		else
@@ -279,7 +241,7 @@ void parser_test(testCase & myTest){
 			if(!isLoadArchive)
 			{
 				workspace * ws = openWorkspace(myTest.filename, myTest.sampNloc,myTest.xmlParserOption, wsType);
-				gs.reset(ws->ws2gs(sampleIDs,isParseGate,sampleNames));
+				gs.reset(ws->ws2gs<FRAMETYPE>(sampleIDs,isParseGate,sampleNames));
 				delete ws;
 			}
 
@@ -297,19 +259,13 @@ void parser_test(testCase & myTest){
 
 
 		string curSample=samples.at(0);
-		/*
-		 * nc is only used for c code debugging and not used
-		 * in production code(the flow data is always from R) thus not archived
-		 *
-		 */
-		hdfFlow nc = gs_attachCDF(*gs,myTest);
 
-		GatingHierarchy& gh=gs->getGatingHierarchy(curSample);
+		GatingHierarchy<FRAMETYPE>& gh=gs->getGatingHierarchy(curSample);
 
 //		gh_accessor_test(gh);
 
 		if(!isLoadArchive)
-			gs_gating(*gs,curSample,nc, gains);
+			gs_gating(*gs,curSample,myTest.fcs, gains);
 
 		/*
 		 * recompute the gate to check if the pop indices are restored properly
@@ -319,12 +275,16 @@ void parser_test(testCase & myTest){
 			std::clock_t    start;
 
 			 start = std::clock();
-			flowData res=nc.readflowData(curSample);
-			gh.loadData(res);//
+			 FCS_READ_PARAM config;
+
+			MemCytoFrame frm(myTest.fcs, config, true);
+
+			gh.setframe(frm);
+			gh.loadData();//
 			gh.transforming(1);
 			gh.gating(0, true);
 			gh.unloadData();
-			delete res.data;
+
 			string filename = "timelog2";
 			double runtime = (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000);
 			ofstream timelog;
@@ -362,114 +322,3 @@ void parser_test(testCase & myTest){
 
 
 }
-
-//void gs_parse(testCase myTest,bool isTemplate,bool isLoadArchive){
-//
-//		bool isParseGate = true;
-//		GatingSet *gs;
-//		//create gating set object
-//		if(isLoadArchive)
-//		{
-//			gs=new GatingSet();
-//			restore_gs(*gs,myTest.archive, ARCHIVE_TYPE_BINARY);
-//		}
-//		else
-//			gs=new GatingSet(myTest.filename,isParseGate,myTest.sampNloc);
-//
-//		/*
-//		 * test cloning function
-//		 */
-////		GatingSet *clonedGs=gs->clone();
-////		delete gs;
-////		gs=clonedGs;
-//
-//		//parse a set of sampleIDs
-//		vector<string> sampleIDs;
-//		for(map<string,string>::iterator it=myTest.samples.begin();it!=myTest.samples.end();it++)
-//			sampleIDs.push_back(it->first);
-//		if(isTemplate)
-//			sampleIDs.erase(sampleIDs.begin());//remove the first sample,which is used for testing gating template feature
-//
-//		if(!isLoadArchive)
-//			gs->parseWorkspace(sampleIDs,isParseGate);
-//
-//		cout<<endl<<"get sample names from gating set"<<endl;
-//
-//
-//
-//		vector<string> samples=gs->getSamples();
-//		for(vector<string>::iterator it=samples.begin();it!=samples.end();it++)
-//			cout<<*it<<endl;
-//
-//		GatingHierarchy* gh;
-//
-//		string curSample=samples.at(0);
-//		hdfFlow nc;
-//		if(!isLoadArchive)
-//			nc =gs_attachCDF(*gs,myTest);
-//		gh=gs->getGatingHierarchy(curSample);
-////		gh.printLocalTrans();
-//		gh_accessor_test(gh);
-////		plotGraph(gh);
-//
-//		if(!isLoadArchive)
-//			gs_gating(*gs,curSample,nc);
-//
-//		gh_counts(gh, isEqual,tolerance);
-//
-////		gh_removeGate(gh);
-//
-////		gh_accessor_test(gh);
-//
-//		if(!isLoadArchive)
-//			save_gs(*gs,myTest.archive, ARCHIVE_TYPE_BINARY);
-//
-//		if(isTemplate)
-//		{
-//
-//
-//		/*
-//		 * gating_template_test
-//		 */
-//			cout<<"-- cloning getGatingHierarchy ---"<<endl;
-//			/*
-//			 * get sample names from myTest and remove the first one which was used to extract gating template
-//			 */
-//			vector<string> newSamples;
-//			for(map<string,string>::iterator it=myTest.samples.begin();it!=myTest.samples.end();it++)
-//				newSamples.push_back(it->second);
-//			newSamples.erase(newSamples.begin()+1);
-//
-//			/*
-//			 * clone the previous parsed gating hierarchy:gh
-//			 */
-//	//		gh.printLocalTrans();
-//			GatingSet * newGS=new GatingSet(gh,newSamples);
-//			hdfFlow nc = gs_attachCDF(*newGS,myTest);
-//
-//			/*
-//			 * do the gating on cloned gating hierarchy
-//			 */
-//			string newSample=newSamples.at(0);
-//			GatingHierarchy* gh_new;
-//			gh_new=newGS->getGatingHierarchy(newSample);
-////			gh_new->printLocalTrans();
-//	//		gh_accessor_test(gh_new);
-//
-//			gs_gating(*newGS,newSample,nc);
-//
-//
-////			gh_counts(gh_new);
-//
-//			delete newGS;
-//		}
-//
-//		delete gs;
-//
-//}
-//
-//
-
-
-
-

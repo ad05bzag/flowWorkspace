@@ -19,15 +19,15 @@
 #include "cytolib/GatingHierarchy.hpp"
 #include "cytolib/transformation.hpp"
 #include "cytolib/spline.hpp"
-#include "ncdfFlow.hpp"
 using namespace std;
 
 
 struct testCase{
 	string filename; //xml file name
 	unsigned short wsType; //workspace type
-	string colfile; // text file that records the compensated channel names
-	string ncfile; // raw data stored in hdf format
+	string colfile; // text file that records the compensated channel names deprecated
+	string ncfile; // raw data stored in hdf format deprecated
+	string fcs; // raw data stored in hdf format
 	map<string,string> samples; // fcs file name vs sampleID
 	unsigned short sampNloc; // the location where the sample name to be parsed
 	string archive; // archived gating set dat file
@@ -45,9 +45,10 @@ struct testCase{
 //	vector<double> times;//global variable to collect run time
 
 } ;
-hdfFlow gs_attachCDF(GatingSet & gs,testCase myTest);
-void gs_gating(GatingSet &gs,string curSample, hdfFlow nc);
-void gh_counts(GatingHierarchy* gh,vector<bool> &isEqual, const float tolerance);
+typedef MemCytoFrame FRAMETYPE;
+
+void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string,float> &gains);
+void gh_counts(GatingHierarchy<FRAMETYPE>& gh,vector<bool> &isEqual, const float tolerance);
 void clone_test(testCase myTest);
 //void gs_parse(testCase,unsigned short,bool,bool);
 void parser_test(testCase &);

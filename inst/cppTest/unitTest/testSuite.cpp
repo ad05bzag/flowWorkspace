@@ -131,8 +131,7 @@ BOOST_AUTO_TEST_CASE(PBMC_HIPC_trial)
 	myTest.samples["1"]="004_A1_A01.fcs";
 	myTest.samples["2"]="004_B1_B01.fcs";
 	myTest.sampNloc=1;
-	myTest.ncfile="../output/HIPC_trial/nc_comp.nc";
-	myTest.colfile="../output/HIPC_trial/colnames.txt";
+	myTest.fcs="../wsTestSuite/PBMC/HIPC_trial/data/004_A1_A01.fcs";
 	myTest.archive="../output/HIPC_trial/gs";
 //	g_loglevel = GATE_LEVEL;
 	parser_test(myTest);
@@ -180,8 +179,7 @@ BOOST_AUTO_TEST_CASE(Cytotrol_NHLBI)
 	myTest.wsType = WS_MAC;
 	myTest.samples["1"]="CytoTrol_CytoTrol_1.fcs";
 	myTest.sampNloc=1;
-	myTest.ncfile="../output/NHLBI/nc1_comp.nc";
-	myTest.colfile="../output/NHLBI/colnames.txt";
+	myTest.fcs="../wsTestSuite/Cytotrol/NHLBI/Tcell/CytoTrol_CytoTrol_1.fcs";;
 	myTest.archive="../output/NHLBI/gs/gs";
 //	g_loglevel = GATE_LEVEL;
 
@@ -286,8 +284,7 @@ BOOST_AUTO_TEST_CASE(ragon)
 	myTest.wsType = WS_MAC_3;
 	myTest.samples["28"]="477889_env_cct_norm_concatenated.txt";
 	myTest.sampNloc=1;
-	myTest.ncfile="../output/Ragon/nc_comp.nc";
-	myTest.colfile="../output/Ragon/colnames.txt";
+	myTest.fcs="../wsTestSuite/Ragon/477889_env_cct_norm_concatenated.txt";
 	myTest.archive="../output/Ragon/gs";
 
 //	myTest.isSaveArchive = true;
