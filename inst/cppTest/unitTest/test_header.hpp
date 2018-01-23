@@ -9,10 +9,7 @@
 #define TEST_HEADER_HPP_
 
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <boost/algorithm/string.hpp>
+
 #include "flowWorkspace/openWorkspace.hpp"
 #include "flowWorkspace/flowJoWorkspace.hpp"
 #include "cytolib/GatingSet.hpp"

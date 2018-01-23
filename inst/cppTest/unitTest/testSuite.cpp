@@ -332,8 +332,8 @@ BOOST_AUTO_TEST_CASE(treg)
 	myTest.wsType = WS_VX;
 	myTest.samples["9"] = "samples_F4.fcs";
 	myTest.sampNloc=1;
-	myTest.ncfile="../output/McGill/Treg/data.nc";
-	myTest.colfile="../output/McGill/Treg/colnames.txt";
+	myTest.fcs="../wsTestSuite/McGill/Treg/samples_F4.fcs";
+//	myTest.colfile="../output/McGill/Treg/colnames.txt";
 	myTest.archive="../output/McGill/Treg/gs";
 
 	parser_test(myTest);
@@ -393,8 +393,8 @@ BOOST_AUTO_TEST_CASE(curlyquad1)
 	myTest.wsType = WS_VX;
 	myTest.samples["78"] = "A1001.001.fcs";
 	myTest.sampNloc=1;
-	myTest.ncfile="../output/curlyQuad1/comp.nc";
-	myTest.colfile="../output/curlyQuad1/colnames.txt";
+	myTest.fcs="../wsTestSuite/curlyQuad/example1/A1001.001.fcs";
+//	myTest.colfile="../output/curlyQuad1/colnames.txt";
 	myTest.archive="../output/curlyQuad1/gs";
 
 	myTest.tolerance = 0.15;

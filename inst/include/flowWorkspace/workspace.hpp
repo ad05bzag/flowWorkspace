@@ -7,11 +7,12 @@
 
 #ifndef WORKSPACE_HPP_
 #define WORKSPACE_HPP_
+#include "wsNode.hpp"
 #include <vector>
 #include <string>
 #include <libxml/xpath.h>
 #include <libxml/parser.h>
-#include "wsNode.hpp"
+
 #include <cytolib/GatingSet.hpp>
 #include "cytolib/transformation.hpp"
 #include <iostream>

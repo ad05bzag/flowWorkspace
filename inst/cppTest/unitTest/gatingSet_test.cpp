@@ -6,10 +6,10 @@
  */
 
 #include "test_header.hpp"
-#include <boost/dynamic_bitset.hpp>
-#include <boost/serialization/bitset.hpp>
-#include <bitset>
-#include <boost/serialization/array.hpp>
+//#include <boost/dynamic_bitset.hpp>
+//#include <boost/serialization/bitset.hpp>
+//#include <bitset>
+//#include <boost/serialization/array.hpp>
 #include <boost/math/distributions/normal.hpp>
 
 /*
@@ -132,15 +132,17 @@ void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string
 	MemCytoFrame frm(fcs, config, false);
 
 	gh.setframe(frm);
-	gh.loadData();//
 
+	gh.load_fdata_cache();//
+	gh.compensate();
 	gh.adjustGate(gains);
 	gh.transformGate();
 	gh.transforming(1);
 	gh.extendGate(0);
-
 	gh.gating(0,false, true);
-	gh.unloadData();
+	//sync comp & trans data
+
+	gh.release_fdata_cache(true);
 
 }
 void gh_counts(GatingHierarchy<FRAMETYPE> & gh,vector<bool> &isEqual, const float tolerance, const vector<VertexID> skipPops){
@@ -280,10 +282,10 @@ void parser_test(testCase & myTest){
 			MemCytoFrame frm(myTest.fcs, config, true);
 
 			gh.setframe(frm);
-			gh.loadData();//
+			gh.load_fdata_cache();//
 			gh.transforming(1);
 			gh.gating(0, true);
-			gh.unloadData();
+			gh.release_fdata_cache(false);
 
 			string filename = "timelog2";
 			double runtime = (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000);
