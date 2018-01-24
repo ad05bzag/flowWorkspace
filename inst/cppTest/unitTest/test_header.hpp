@@ -17,6 +17,7 @@
 #include "cytolib/transformation.hpp"
 #include "cytolib/spline.hpp"
 using namespace std;
+using namespace cytolib;
 
 
 struct testCase{

@@ -26,6 +26,7 @@
 
 
 using namespace std;
+using namespace cytolib;
 
 /*TODO: so far I have seen the major difference between win and mac workspace is the xpath(like xpath of sample node)
  * if this is the case eventually we can try to use one template class (eliminate two derived classes )

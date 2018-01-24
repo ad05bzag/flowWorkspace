@@ -5,6 +5,7 @@
 
 #include "test_header.hpp"
 float gTol = 0.05;
+
 CYTOLIB_INIT()
 //unsigned short myTestPolymorphism(){
 //	gate * g= NULL;
