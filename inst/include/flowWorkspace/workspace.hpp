@@ -7,7 +7,7 @@
 
 #ifndef WORKSPACE_HPP_
 #define WORKSPACE_HPP_
-#include "wsNode.hpp"
+#include "cytoml.hpp"
 #include <vector>
 #include <string>
 

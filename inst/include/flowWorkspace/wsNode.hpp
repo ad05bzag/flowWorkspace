@@ -7,7 +7,12 @@
 
 #ifndef WSNODE_HPP_
 #define WSNODE_HPP_
-#include "cytoml.hpp"
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
+#include <libxml/parser.h>
+#include "cytolib/nodeProperties.hpp"
+using namespace std;
+
 #ifdef ROUT
 #include <Rcpp.h>
 #define COUT Rcpp::Rcout //flowWorkspace is still using Rcpp, so we don't bother replace COUT with PRINT yet

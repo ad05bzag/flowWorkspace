@@ -206,7 +206,7 @@ void clone_test(testCase myTest){
 }
 
 void parser_test(testCase & myTest){
-	print_supported_workspace_version();
+//	print_supported_workspace_version();
 	bool isTemplate = myTest.isTemplate;
 	bool isLoadArchive = myTest.isLoadArhive;
 	unsigned format = myTest.archiveFormat;
