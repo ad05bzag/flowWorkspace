@@ -17,7 +17,7 @@ namespace cytoml
  * read xml file and create the appropriate flowJoWorkspace object
  * The reason to return a dynamically allocated pointer is solely for the sake of runtime polymorphism
  */
-inline flowJoWorkspace * openWorkspace(string sFileName,unsigned short sampNloc,int xmlParserOption)
+inline flowJoWorkspace * openWorkspace(string sFileName,SAMPLE_NAME_LOCATION sampNloc,int xmlParserOption)
 {
 
 		LIBXML_TEST_VERSION

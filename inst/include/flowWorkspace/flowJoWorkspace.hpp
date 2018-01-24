@@ -99,7 +99,7 @@ public:
 		string filename;
 		switch(nodePath.sampNloc)
 		{
-			case 1:
+			case SAMPLE_NAME_LOCATION::KEY_WORD:
 			{
 				xmlXPathObjectPtr res=node.xpathInNode("Keywords/Keyword[@name='$FIL']");
 				if(res->nodesetval->nodeNr!=1){
@@ -112,7 +112,7 @@ public:
 				filename=kwNode.getProperty("value");
 				break;
 			}
-			case 2:
+			case SAMPLE_NAME_LOCATION::SAMPLE_NODE:
 			{
 				xmlXPathObjectPtr res=node.xpathInNode("SampleNode");//get sampleNode
 				wsNode sampleNode(res->nodesetval->nodeTab[0]);

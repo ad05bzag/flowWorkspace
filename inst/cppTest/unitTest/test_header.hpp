@@ -27,7 +27,7 @@ struct testCase{
 	string ncfile; // raw data stored in hdf format deprecated
 	string fcs; // raw data stored in hdf format
 	map<string,string> samples; // fcs file name vs sampleID
-	unsigned short sampNloc; // the location where the sample name to be parsed
+	SAMPLE_NAME_LOCATION sampNloc; // the location where the sample name to be parsed
 	string archive; // archived gating set dat file
 	vector<bool> isEqual; // the bool vector records the counts discrepancy (using cv) between flowJo and flowCore
 	float tolerance; // the threshold for cv value

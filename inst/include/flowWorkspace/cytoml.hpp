@@ -1,22 +1,25 @@
 #include "wsNode.hpp"
 using namespace cytolib;
 
-enum class WS_TYPE {WS_WIN, WS_MAC, WS_MAC_3, WS_VX};
+enum class WS_TYPE {WS_WIN, WS_MAC, WS_MAC_3, WS_VX}; //can't put it into cytoml namespace since ws_ver_type_map need to refer it
 
 typedef unordered_map<string, WS_TYPE> WS_VERSION_TYPE_MAP;
+
 extern WS_VERSION_TYPE_MAP ws_ver_type_map; //declare global var
 #define CYTOML_INIT() \
-	WS_VERSION_TYPE_MAP ws_ver_type_map = {\
-											{"1.61", WS_TYPE::WS_WIN},\
-											{"1.6", WS_TYPE::WS_WIN},\
-											{"2.0", WS_TYPE::WS_MAC},\
-											{"3.0", WS_TYPE::WS_MAC_3},\
-											{"1.8", WS_TYPE::WS_VX},\
-											{"20.0", WS_TYPE::WS_VX}\
-											};\
+		WS_VERSION_TYPE_MAP ws_ver_type_map = {\
+												{"1.61", WS_TYPE::WS_WIN},\
+												{"1.6", WS_TYPE::WS_WIN},\
+												{"2.0", WS_TYPE::WS_MAC},\
+												{"3.0", WS_TYPE::WS_MAC_3},\
+												{"1.8", WS_TYPE::WS_VX},\
+												{"20.0", WS_TYPE::WS_VX}\
+												};\
 
 namespace cytoml
 {
+
+	enum class SAMPLE_NAME_LOCATION {KEY_WORD = 1, SAMPLE_NODE = 2};
 
 	inline void print_supported_workspace_version()
 	{

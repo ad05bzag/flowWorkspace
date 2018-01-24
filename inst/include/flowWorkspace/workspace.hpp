@@ -50,7 +50,7 @@ struct xpath{
 	string compMatName;
 	string compMatChName;
 	string compMatVal;
-	unsigned short sampNloc;//get FCS filename(or sampleName) from either $FIL keyword or name attribute of sampleNode
+	SAMPLE_NAME_LOCATION sampNloc;//get FCS filename(or sampleName) from either $FIL keyword or name attribute of sampleNode
 };
 
 
