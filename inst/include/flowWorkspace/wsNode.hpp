@@ -7,10 +7,7 @@
 
 #ifndef WSNODE_HPP_
 #define WSNODE_HPP_
-#include "cytolib/nodeProperties.hpp"
-#include <libxml/tree.h>
-#include <libxml/xpath.h>
-
+#include "cytoml.hpp"
 #ifdef ROUT
 #include <Rcpp.h>
 #define COUT Rcpp::Rcout //flowWorkspace is still using Rcpp, so we don't bother replace COUT with PRINT yet
@@ -22,7 +19,8 @@
 #endif
 
 
-
+namespace cytoml
+{
 class wsNode{
 
 	xmlNodePtr thisNode;
@@ -172,6 +170,6 @@ public:
 
 typedef vector<wsPopNode> wsPopNodeSet;
 
-
+};
 #endif /* WSNODE_HPP_ */
 

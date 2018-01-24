@@ -9,6 +9,8 @@
 #define WINFLOWJOWORKSPACE_HPP_
 #include "flowJoWorkspace.hpp"
 
+namespace cytoml
+{
 class winFlowJoWorkspace:public flowJoWorkspace{
 public:
 
@@ -830,5 +832,5 @@ public:
 	}
 
 };
-
+};
 #endif /* WINFLOWJOWORKSPACE_HPP_ */

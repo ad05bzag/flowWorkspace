@@ -18,7 +18,7 @@
 #include "cytolib/spline.hpp"
 using namespace std;
 using namespace cytolib;
-
+using namespace cytoml;
 
 struct testCase{
 	string filename; //xml file name

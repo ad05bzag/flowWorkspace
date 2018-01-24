@@ -10,8 +10,6 @@
 #include "wsNode.hpp"
 #include <vector>
 #include <string>
-#include <libxml/xpath.h>
-#include <libxml/parser.h>
 
 #include <cytolib/GatingSet.hpp>
 #include "cytolib/transformation.hpp"
@@ -19,15 +17,9 @@
 #include <algorithm>
 #include <fstream>
 
-#define WS_WIN 1
-#define WS_MAC 2
-#define WS_VX 3
-#define WS_MAC_3 4
 
-
-using namespace std;
-using namespace cytolib;
-
+namespace cytoml
+{
 /*TODO: so far I have seen the major difference between win and mac workspace is the xpath(like xpath of sample node)
  * if this is the case eventually we can try to use one template class (eliminate two derived classes )
  * with T structure that stores different versions of xpaths for win/mac,for example:
@@ -65,7 +57,7 @@ struct xpath{
 class workspace{
 public:
 	 xpath nodePath;
-//protected:
+
 
 	 xmlDoc * doc;
 
@@ -113,7 +105,8 @@ public:
 		 //		COUT<<res[i]<<",";
 		 	}
 	 }
-	 virtual void parseVersionList(){};
+
+
 	 /*
 	  * add root node first before recursively add the other nodes
 	  * since root node does not have gates as the others do
@@ -298,6 +291,6 @@ public:
 	 }
 };
 
-
+};
 #endif /* WORKSPACE_HPP_ */
 

@@ -9,6 +9,8 @@
 #define MACFLOWJOWORKSPACE_HPP_
 #include "flowJoWorkspace.hpp"
 
+namespace cytoml
+{
 class macFlowJoWorkspace:public flowJoWorkspace{
 public:
 
@@ -839,6 +841,6 @@ public:
 };
 
 
-
+};
 
 #endif /* MACFLOWJOWORKSPACE_HPP_ */

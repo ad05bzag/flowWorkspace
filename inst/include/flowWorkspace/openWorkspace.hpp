@@ -10,13 +10,16 @@
 
 #include "macFlowJoWorkspace.hpp"
 #include "winFlowJoWorkspace.hpp"
+
+namespace cytoml
+{
 /**
  * read xml file and create the appropriate flowJoWorkspace object
  * The reason to return a dynamically allocated pointer is solely for the sake of runtime polymorphism
  */
-inline workspace * openWorkspace(string sFileName,unsigned short sampNloc,int xmlParserOption,unsigned short wsType)
+inline flowJoWorkspace * openWorkspace(string sFileName,unsigned short sampNloc,int xmlParserOption)
 {
-		workspace * wsPtr=NULL;
+
 		LIBXML_TEST_VERSION
 
 		/*parse the file and get the DOM */
@@ -35,19 +38,20 @@ inline workspace * openWorkspace(string sFileName,unsigned short sampNloc,int xm
 //				fprintf(stderr,"document of the wrong type, root node != Workspace");
 				throw(invalid_argument("document of the wrong type, root node != 'Workspace'"));
 			}
+		 flowJoWorkspace * wsPtr;
 
-
+		 WS_TYPE wsType = get_workspace_type(doc);
 		 switch(wsType){
-		 	 case WS_WIN:
+		 	 case WS_TYPE::WS_WIN:
 		 		 wsPtr=new winFlowJoWorkspace(doc);
 		 		 break;
-		 	 case WS_MAC:
+		 	 case WS_TYPE::WS_MAC:
 		 		 wsPtr=new macFlowJoWorkspace(doc);
 		 		 break;
-		 	 case WS_VX:
+		 	 case WS_TYPE::WS_VX:
 				 wsPtr=new xFlowJoWorkspace(doc);
 				 break;
-		 	case WS_MAC_3:
+		 	case WS_TYPE::WS_MAC_3:
 				 wsPtr=new macFlowJoWorkspace_3(doc);
 				 break;
 		 	 default:
@@ -64,4 +68,5 @@ inline workspace * openWorkspace(string sFileName,unsigned short sampNloc,int xm
 		 wsPtr->parseVersionList();
 		 return wsPtr;
 }
+};
 #endif /* INCLUDE_WS2GH_HPP_ */

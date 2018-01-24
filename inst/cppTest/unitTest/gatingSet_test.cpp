@@ -206,7 +206,7 @@ void clone_test(testCase myTest){
 }
 
 void parser_test(testCase & myTest){
-
+	print_supported_workspace_version();
 	bool isTemplate = myTest.isTemplate;
 	bool isLoadArchive = myTest.isLoadArhive;
 	unsigned format = myTest.archiveFormat;
@@ -220,7 +220,7 @@ void parser_test(testCase & myTest){
 		archiveName = archiveName.append(".pb");
 	else
 		archiveName = archiveName.append(".dat");
-	unsigned short wsType = myTest.wsType;
+//	unsigned short wsType = myTest.wsType;
 		boost::scoped_ptr<GatingSet<FRAMETYPE>> gs;
 		if(isLoadArchive)
 		{
@@ -242,7 +242,7 @@ void parser_test(testCase & myTest){
 
 			if(!isLoadArchive)
 			{
-				workspace * ws = openWorkspace(myTest.filename, myTest.sampNloc,myTest.xmlParserOption, wsType);
+				workspace * ws = openWorkspace(myTest.filename, myTest.sampNloc,myTest.xmlParserOption);
 				gs.reset(ws->ws2gs<FRAMETYPE>(sampleIDs,isParseGate,sampleNames));
 				delete ws;
 			}

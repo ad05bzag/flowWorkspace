@@ -7,6 +7,9 @@
 float gTol = 0.05;
 
 CYTOLIB_INIT()
+
+CYTOML_INIT()
+
 //unsigned short myTestPolymorphism(){
 //	gate * g= NULL;
 //
@@ -110,7 +113,7 @@ BOOST_AUTO_TEST_CASE(gate_extension)
 {
 
 	myTest.filename="../wsTestSuite/gate_extension/02-15-2013 ICS.xml";
-	myTest.wsType = WS_MAC_3;
+	//myTest.wsType = WS_TYPE::WS_MAC_3;
 	myTest.samples["8"]="9148_Neg1.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/gate_extension/nc_comp.nc";
@@ -128,7 +131,7 @@ BOOST_AUTO_TEST_CASE(PBMC_HIPC_trial)
 {
 
 	myTest.filename="../wsTestSuite/PBMC/HIPC_trial/data/HIPC_trial.xml";
-	myTest.wsType = WS_MAC;
+	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["1"]="004_A1_A01.fcs";
 	myTest.samples["2"]="004_B1_B01.fcs";
 	myTest.sampNloc=1;
@@ -144,7 +147,7 @@ BOOST_AUTO_TEST_CASE(PBMC_HIPC_trial)
 BOOST_AUTO_TEST_CASE(PBMC_Blomberg)
 {
 	myTest.filename="../wsTestSuite/PBMC/Blomberg/Exp2_Tcell.wsp";
-	myTest.wsType = WS_WIN;
+	//myTest.wsType = WS_TYPE::WS_WIN;
 	myTest.samples["12"]="Exp2_Sp004_1_Tcell.fcs";
 	myTest.samples["13"]="Exp2_Sp004_2_Tcell.fcs";
 	myTest.sampNloc=2;
@@ -160,7 +163,7 @@ BOOST_AUTO_TEST_CASE(PBMC_Blomberg)
 BOOST_AUTO_TEST_CASE(ITN029ST)
 {
 	myTest.filename="../fjWsExamples/QA_template.xml";
-	myTest.wsType = WS_MAC;
+	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["74161"]="01107122_F11_I003.fcs";
 	myTest.samples["74162"]="01177007_F02_I016.fcs";
 	myTest.sampNloc=1;
@@ -177,7 +180,7 @@ BOOST_AUTO_TEST_CASE(ITN029ST)
 BOOST_AUTO_TEST_CASE(Cytotrol_NHLBI)
 {
 	myTest.filename="../wsTestSuite/Cytotrol/NHLBI/flowJo/NHLBI.xml";
-	myTest.wsType = WS_MAC;
+	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["1"]="CytoTrol_CytoTrol_1.fcs";
 	myTest.sampNloc=1;
 	myTest.fcs="../wsTestSuite/Cytotrol/NHLBI/Tcell/CytoTrol_CytoTrol_1.fcs";;
@@ -193,7 +196,7 @@ BOOST_AUTO_TEST_CASE(Cytotrol_NHLBI)
 BOOST_AUTO_TEST_CASE(HVTN080_batch_1057)
 {
 	myTest.filename="../fjWsExamples/080 Batch 1057 M.xml";
-	myTest.wsType = WS_MAC;
+	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["28"]="517614.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/HVTN080/nc_comp.nc";
@@ -210,7 +213,7 @@ BOOST_AUTO_TEST_CASE(HVTN080_batch_1057)
 BOOST_AUTO_TEST_CASE(HVTN080_batch_0939)
 {
 	myTest.filename="../fjWsExamples/080 batch 0939.xml";
-	myTest.wsType = WS_MAC;
+	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["18"]="461648.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/NormalizationData/nc_comp.nc";
@@ -226,7 +229,7 @@ BOOST_AUTO_TEST_CASE(HVTN080_batch_0939)
 BOOST_AUTO_TEST_CASE(Lesson_8_vX_A)
 {
 	myTest.filename="../wsTestSuite/vX/Lesson_8_vX.wsp";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["1"]="A1.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/vX/A1/nc_comp.nc";
@@ -242,7 +245,7 @@ BOOST_AUTO_TEST_CASE(Lesson_8_vX_A)
 BOOST_AUTO_TEST_CASE(Lesson_8_vX_B)
 {
 	myTest.filename="../wsTestSuite/vX/Lesson_8_vX.wsp";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["10"]="B1 .fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/vX/B1/nc_comp.nc";
@@ -265,7 +268,7 @@ BOOST_AUTO_TEST_CASE(bioaster)
 {
 
 	myTest.filename="../wsTestSuite/bioaster_ellipsoidGate/Matrice 1.wsp";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["8"]="PANEL 1_Matrice 1.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/bioaster/nc_comp.nc";
@@ -282,7 +285,7 @@ BOOST_AUTO_TEST_CASE(bioaster)
 BOOST_AUTO_TEST_CASE(ragon)
 {
 	myTest.filename="../wsTestSuite/Ragon/neut v non neut v9.xml";
-	myTest.wsType = WS_MAC_3;
+	//myTest.wsType = WS_TYPE::WS_MAC_3;
 	myTest.samples["28"]="477889_env_cct_norm_concatenated.txt";
 	myTest.sampNloc=1;
 	myTest.fcs="../wsTestSuite/Ragon/477889_env_cct_norm_concatenated.txt";
@@ -302,7 +305,7 @@ BOOST_AUTO_TEST_CASE(ragon)
 BOOST_AUTO_TEST_CASE(JJ)
 {
 	myTest.filename="../wsTestSuite/JJ/JJ_FlowJo_.xml";
-	myTest.wsType = WS_MAC;
+	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["221"] = "Panel 2_A9001.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/JJ/data.nc";
@@ -330,7 +333,7 @@ BOOST_AUTO_TEST_CASE(JJ)
 BOOST_AUTO_TEST_CASE(treg)
 {
 	myTest.filename="../wsTestSuite/McGill/Treg/20131206_Treg.1.ellipseidGate.wsp";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["9"] = "samples_F4.fcs";
 	myTest.sampNloc=1;
 	myTest.fcs="../wsTestSuite/McGill/Treg/samples_F4.fcs";
@@ -346,7 +349,7 @@ BOOST_AUTO_TEST_CASE(treg)
 //BOOST_AUTO_TEST_CASE(EllipsoidGate_10)
 //{
 //	myTest.filename="../wsTestSuite/EllipsoidGate_10.2/mA J21 for HT.wsp";
-//	myTest.wsType = WS_VX;
+//	//myTest.wsType = WS_TYPE::WS_VX;
 //	myTest.samples["33"] = "MarquageA_Lung_IN_001.fcs";
 //	myTest.sampNloc=1;
 //	myTest.ncfile="../output/EllipsoidGate_10.2/data.nc";
@@ -365,7 +368,7 @@ BOOST_AUTO_TEST_CASE(treg)
 BOOST_AUTO_TEST_CASE(provide)
 {
 	myTest.filename="../wsTestSuite/PROVIDE/batch1 local and week 53.wsp";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["5"] = "1097pi_cells_found_normalized.fcs";
 	myTest.sampNloc=2;
 	myTest.ncfile="../output/PROVIDE/data.nc";
@@ -391,10 +394,10 @@ BOOST_AUTO_TEST_CASE(provide)
 BOOST_AUTO_TEST_CASE(curlyquad1)
 {
 	myTest.filename="../wsTestSuite/curlyQuad/example1/20151208_TBNK_DS.xml";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["78"] = "A1001.001.fcs";
 	myTest.sampNloc=1;
-	myTest.fcs="../wsTestSuite/curlyQuad/example1/A1001.001.fcs";
+//	myTest.fcs="../wsTestSuite/curlyQuad/example1/A1001.001.fcs";
 //	myTest.colfile="../output/curlyQuad1/colnames.txt";
 	myTest.archive="../output/curlyQuad1/gs";
 
@@ -417,7 +420,7 @@ BOOST_AUTO_TEST_CASE(curlyquad1)
 BOOST_AUTO_TEST_CASE(curlyquad2)
 {
 	myTest.filename="../wsTestSuite/curlyQuad/example2/20-Apr-2016.wsp";
-	myTest.wsType = WS_VX;
+	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["1"] = "CytoTrol_CytoTrol_1.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/curlyQuad2/comp.nc";
@@ -443,7 +446,7 @@ BOOST_AUTO_TEST_CASE(curlyquad2)
 BOOST_AUTO_TEST_CASE(searchRefNode)
 {
 	myTest.filename="../wsTestSuite/searchRefNode/2583-Y-MAL067-FJ.xml";
-	myTest.wsType = WS_MAC_3;
+	//myTest.wsType = WS_TYPE::WS_MAC_3;
 	myTest.samples["728"] = "1379326.fcs";
 	myTest.sampNloc=1;
 	myTest.ncfile="../output/searchRefNode/comp.nc";
@@ -460,7 +463,7 @@ BOOST_AUTO_TEST_CASE(searchRefNode)
 //{
 //
 //	myTest.filename="/home/wjiang2/R/x86_64-pc-linux-gnu-library/3.4/flowWorkspaceData/extdata/A2004Analysis.xml";
-//	myTest.wsType = WS_MAC;
+//	//myTest.wsType = WS_TYPE::WS_MAC;
 //	myTest.samples["1"]="a2004_O1T2pb05i_A1_A01.fcs";
 //	myTest.sampNloc=1;
 //	myTest.ncfile="../output/invalid_biexp_parameter/nc_comp.nc";
@@ -476,7 +479,7 @@ BOOST_AUTO_TEST_CASE(searchRefNode)
 //BOOST_AUTO_TEST_CASE(mssm)
 //{
 //	myTest.filename="../data/mssm/CFSP_Analysis14.wsp";
-//	myTest.wsType = WS_VX;
+//	//myTest.wsType = WS_TYPE::WS_VX;
 //	myTest.samples["35"]="35120.fcs";
 //	myTest.sampNloc=1;
 //	myTest.ncfile="../output/mssm/data.nc";
@@ -492,7 +495,7 @@ BOOST_AUTO_TEST_CASE(searchRefNode)
 //BOOST_AUTO_TEST_CASE(RV144) //workspace missing (original  .xml is not valid xml)
 //{
 //	myTest.filename="../fjWsExamples/Batch 1264 RV144.wsp";
-//	myTest.wsType = WS_WIN;
+//	//myTest.wsType = WS_TYPE::WS_WIN;
 //	myTest.samples["85"]="977531.fcs";
 //	myTest.sampNloc=1;
 //	myTest.ncfile="../output/RV144/nc_comp.nc";

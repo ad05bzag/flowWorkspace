@@ -14,9 +14,11 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
 
+namespace cytoml
+{
 class flowJoWorkspace:public workspace{
 private:
-	string versionList;
+	string versionList;//used for legacy mac ws
 public:
 
 	flowJoWorkspace(xmlDoc * doc){
@@ -83,7 +85,6 @@ public:
 			xmlXPathFreeObject (sids);
 			return(sampleID);
 	}
-
 
 
 	/*
@@ -300,6 +301,7 @@ public:
 
 	}
 
+	//used for legacy mac ws
 	void parseVersionList(){
 		wsNode root(this->doc->children);
 		xmlXPathObjectPtr res = root.xpath("/Workspace");
@@ -310,6 +312,7 @@ public:
 	}
 	/*
 	 * get the minimum initial digit from the version list string
+	 * //used for legacy mac ws
 	 */
 	unsigned short getVersionMin(){
 		int res=numeric_limits<int>::max();
@@ -432,6 +435,6 @@ public:
 
 
 
-
+};
 
 #endif /* FLOWJOWORKSPACE_HPP_ */
