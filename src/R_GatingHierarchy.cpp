@@ -20,24 +20,10 @@
 #include "cytolib/gate.hpp"
 #include "cytolib/transformation.hpp"
 using namespace std;
-
-#include "cytolib/flowData.hpp"
+using namespace cytolib;
 #include <Rcpp.h>
 using namespace Rcpp;
 
-flowData mat2flowData(NumericMatrix mat,unsigned _sampleID, bool _ignore_case){
-	flowData fd;
-	List dimnames=mat.attr("dimnames");
-	fd.params=as<vector<string> >(dimnames[1]);
-
-	fd.nEvents=mat.nrow();
-	fd.sampleID=_sampleID;
-	fd.ignore_case = _ignore_case;
-
-	fd.data = REAL(mat.get__());
-
-	return fd;
-}
 
 /*
  * only expose gating set pointer to R to avoid gc() by R
@@ -286,7 +272,7 @@ void computeGates(XPtr<GatingSet> gs,string sampleName
 
 //[[Rcpp::export(name=".cpp_gating")]]
 void gating(XPtr<GatingSet> gs
-              , NumericMatrix orig
+              , string fcs
               ,string sampleName
               ,NumericVector gainsVec
               , unsigned short nodeInd
@@ -298,9 +284,9 @@ void gating(XPtr<GatingSet> gs
 
 //	Rcpp::NumericMatrix orig(mat);
 	unsigned sampleID=numeric_limits<unsigned>::max();//dummy sample index
-
-
-	gh.loadData(mat2flowData(orig,sampleID,ignore_case));
+	FCS_READ_PARAM config;
+	gh.set_frame_ptr(new MemCytoFrame(fcs, config, true));
+	gh.load_fdata_cache();//
 	if(!recompute)
 	{
 	
@@ -318,7 +304,7 @@ void gating(XPtr<GatingSet> gs
 
 	gh.gating(nodeInd,recompute, computeTerminalBool);
 
-	gh.unloadData();
+	gh.release_fdata_cache(true);
 
 
 }

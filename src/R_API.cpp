@@ -9,6 +9,7 @@
 #include "cytolib/GatingSet.hpp"
 #include <Rcpp.h>
 using namespace Rcpp;
+using namespace cytolib;
 #define ARRAY_TYPE vector<double>
 //[[Rcpp::plugins(temp)]]
 

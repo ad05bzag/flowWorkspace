@@ -467,7 +467,7 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
     #Compensating the data
     ##################################
     if(execute)
-		{
+	{
       file <- row[["file"]]
       cnd <- colnames(fs)
 			message("loading data: ",file);
@@ -492,76 +492,7 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
 
       compensation <- compensation[[guid]]
 
-			if(cid=="")
-				cid=-2
-
-			if(cid!="-1" && cid!="-2"){
-				message("Compensating");
-
-				marker <- comp$parameters
-
-				if(is.null(compensation)){
-                  
-                  ## try to match marker from comp with flow data in case flowJo is not consistent with data
-                  markerInd <- unlist(lapply(marker, function(thisMarker)grep(paste0("^", thisMarker , "$"), cnd, ignore.case = channel.ignore.case)))
-                  matchedMarker <- cnd[markerInd]
-                  if(length(matchedMarker) != length(marker))
-                    stop("channels mismatched between compensation and flow data!")
-                  marker <- matchedMarker
-
-                  compobj <- compensation(matrix(comp$spillOver,nrow=length(marker),ncol=length(marker),byrow=TRUE,dimnames=list(marker,marker)))
-                }else
-					compobj <- compensation#TODO: to update compensation information in C part
-				#TODO this compensation will fail if the parameters have <> braces (meaning the data is stored compensated).
-				#I need to handle this case properly.
-
-                res <- try(compensate(data,compobj),silent=TRUE)
-				if(inherits(res,"try-error")){
-					message("Data is probably already compensated");
-				}else{
-					data <- res
-					rm(res);
-				}
-
-			}
-			else if(cid=="-2"){
-				#TODO the matrix may be acquisition defined.
-				message("No compensation");
-			}
-			else if(cid=="-1")
-			{
-				##Acquisition defined compensation.
-				nm <- comp$comment
-
-
-				if(grepl("Acquisition-defined",nm)){
-					###Code to compensate the sample using the acquisition defined compensation matrices.
-					message("Compensating with Acquisition defined compensation matrix");
-					#browser()
-					if(is.null(compensation))
-					{
-						compobj <- compensation(spillover(data)$SPILL)
-
-					}else
-					{
-						compobj <- compensation
-
-					}
-
-					res <- try(compensate(data,compobj),silent=TRUE)
-
-					if(inherits(res,"try-error")){
-						message("Data is probably already compensated");
-					}else{
-						data<-res
-						rm(res);
-
-					}
-
-				}
-
-			}
-       }else{
+		}else{
          # get kw from ws (We are not sure yet if this R API will always
          # return keywords from workspace successfully, thus it is currently
          # only used when execute = FALSE
@@ -575,35 +506,7 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
 
        }
 
-       ##################################
-       #alter the colnames
-       ##################################
-  		if(cid!="-2")
-  		{
-
-            #get prefix if it is not set yet
-            if(is.null(prefixColNames)&&prefix){
-
-              if(is.null(cnd)){
-                cnd <- as.vector(parameters(data)@data$name)
-              }
-              prefixColNames <- cnd
-              if(execute)
-                comp_param <- parameters(compobj)
-              else
-                comp_param <- comp$parameters
-
-              comp_param_ind <- match(comp_param, prefixColNames)
-
-              prefixColNames[comp_param_ind] <- paste(comp$prefix,comp_param,comp$suffix,sep="")
-
-
-
-            }
-        }else{
-          prefixColNames <- cnd
-          comp_param_ind <- seq_along(cnd)
-        }
+      
           ##################################
           #transforming and gating
           ##################################
@@ -656,7 +559,7 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
               timestep <- 1
 
 
-            .cpp_gating(gs@pointer, mat, guid, gains, nodeInd, recompute, extend_val, channel.ignore.case, leaf.bool, timestep)
+            .cpp_gating(gs@pointer, file, guid, gains, nodeInd, recompute, extend_val, channel.ignore.case, leaf.bool, timestep)
 #            browser()
             #restore the non-prefixed colnames for updating data in fs with [[<-
             #since colnames(fs) is not udpated yet.

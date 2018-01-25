@@ -182,8 +182,7 @@ public:
 	 /*
 	  * Constructor that starts from a particular sampleNode from workspace to build a tree
 	  */
-	 template<class FrameType>
-	 void ws2gh(GatingHierarchy<FrameType> & gh, wsSampleNode curSampleNode,bool isParseGate,trans_global_vec * _gTrans,biexpTrans * _globalBiExpTrans,linTrans * _globalLinTrans)
+	 void ws2gh(GatingHierarchy & gh, wsSampleNode curSampleNode,bool isParseGate,trans_global_vec * _gTrans,biexpTrans * _globalBiExpTrans,linTrans * _globalLinTrans)
 	 {
 
 	 	wsRootNode root=getRoot(curSampleNode);
@@ -219,7 +218,7 @@ public:
 	 		{
 	 			trans.addTrans(it->first, it->second);
 	 		}
-	 		gh = GatingHierarchy<FrameType>(comp, transFlag, trans);
+	 		gh = GatingHierarchy(comp, transFlag, trans);
 
 	 	}
 
@@ -232,10 +231,9 @@ public:
 
 	 }
 
-	 template<class FrameType>
-	 GatingSet<FrameType> * ws2gs(vector<string> sampleIDs,bool isParseGate, StringVec sampleNames)
+	 GatingSet * ws2gs(vector<string> sampleIDs,bool isParseGate, StringVec sampleNames)
 	 {
-	 	GatingSet<FrameType> * gs=new GatingSet<FrameType>();
+	 	GatingSet * gs=new GatingSet();
 	 	 /*
 	 	  * parsing global calibration tables
 	 	  */
@@ -260,7 +258,7 @@ public:
 	 			COUT<<endl<<"... start parsing sample: "<< sampleID <<"... "<<endl;
 	 		wsSampleNode curSampleNode=getSample(sampleID);
 
-	 		GatingHierarchy<FrameType> & gh = gs->addGatingHierarchy(sampleName);
+	 		GatingHierarchy & gh = gs->addGatingHierarchy(sampleName);
 	 		ws2gh(gh,curSampleNode,isParseGate,&gTrans,gs->get_globalBiExpTrans(),gs->get_globalLinTrans());
 
 	 		if(g_loglevel>=GATING_HIERARCHY_LEVEL)

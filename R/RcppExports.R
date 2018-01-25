@@ -100,8 +100,8 @@
     invisible(.Call(`_flowWorkspace_computeGates`, gs, sampleName, gainsVec, extend_val, extend_to))
 }
 
-.cpp_gating <- function(gs, orig, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep) {
-    invisible(.Call(`_flowWorkspace_gating`, gs, orig, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep))
+.cpp_gating <- function(gs, fcs, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep) {
+    invisible(.Call(`_flowWorkspace_gating`, gs, fcs, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep))
 }
 
 .cpp_getGate <- function(gs, sampleName, gatePath) {
@@ -164,8 +164,8 @@
     invisible(.Call(`_flowWorkspace_setNodeFlag`, gs, sampleName, gatePath, hidden))
 }
 
-.cpp_parseWorkspace <- function(fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, wsType) {
-    .Call(`_flowWorkspace_parseWorkspace`, fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, wsType)
+.cpp_parseWorkspace <- function(fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, isH5) {
+    .Call(`_flowWorkspace_parseWorkspace`, fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, isH5)
 }
 
 .cpp_getSamples <- function(gsPtr) {

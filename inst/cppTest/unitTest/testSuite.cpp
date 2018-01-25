@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(curlyquad1)
 	//myTest.wsType = WS_TYPE::WS_VX;
 	myTest.samples["78"] = "A1001.001.fcs";
 	myTest.sampNloc=SAMPLE_NAME_LOCATION::KEY_WORD;
-//	myTest.fcs="../wsTestSuite/curlyQuad/example1/A1001.001.fcs";
+	myTest.fcs="../wsTestSuite/curlyQuad/example1/A1001.001.fcs";
 //	myTest.colfile="../output/curlyQuad1/colnames.txt";
 	myTest.archive="../output/curlyQuad1/gs";
 

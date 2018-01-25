@@ -17,13 +17,13 @@
 	 */
 
 
-void plotGraph(GatingHierarchy<FRAMETYPE>& gh){
+void plotGraph(GatingHierarchy& gh){
 
 			gh.drawGraph("../output/test.dot");
 			system("dot2gxl ../output/test.dot -o ../output/test.gxl");
 }
 
-void gh_accessor_test(GatingHierarchy<FRAMETYPE>& gh){
+void gh_accessor_test(GatingHierarchy& gh){
 	/*
 		 * getNodes by the T order
 		 */
@@ -116,11 +116,11 @@ void gh_accessor_test(GatingHierarchy<FRAMETYPE>& gh){
 		}
 }
 
-void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string,float> &gains){
+void gs_gating(GatingSet &gs,string curSample, string fcs, map<string,float> &gains){
 	cout<<endl<<"do the gating after the parsing"<<endl;
 
 	//read transformed data once for all nodes
-	GatingHierarchy<FRAMETYPE> & gh=gs.getGatingHierarchy(curSample);
+	GatingHierarchy & gh=gs.getGatingHierarchy(curSample);
 
 //	gh.loadData(curSample);//get flow data from cdf
 
@@ -129,9 +129,7 @@ void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string
 	 */
 	FCS_READ_PARAM config;
 
-	MemCytoFrame frm(fcs, config, false);
-
-	gh.setframe(frm);
+	gh.set_frame_ptr(new MemCytoFrame(fcs, config, false));
 
 	gh.load_fdata_cache();//
 	gh.compensate();
@@ -145,7 +143,7 @@ void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string
 	gh.release_fdata_cache(true);
 
 }
-void gh_counts(GatingHierarchy<FRAMETYPE> & gh,vector<bool> &isEqual, const float tolerance, const vector<VertexID> skipPops){
+void gh_counts(GatingHierarchy & gh,vector<bool> &isEqual, const float tolerance, const vector<VertexID> skipPops){
 	cout<<endl<<"flowJo(flowcore) counts after gating"<<endl;
 	VertexID_vec vertices=gh.getVertices(0);
 	for(VertexID_vec::iterator it=vertices.begin();it!=vertices.end();it++)
@@ -194,13 +192,13 @@ void gh_counts(GatingHierarchy<FRAMETYPE> & gh,vector<bool> &isEqual, const floa
 	}
 }
 
-void gh_removeGate(GatingHierarchy<FRAMETYPE>& gh){
+void gh_removeGate(GatingHierarchy& gh){
 	gh.removeNode(5);
 
 }
 void clone_test(testCase myTest){
 	string archive=myTest.archive;
-	GatingSet<FRAMETYPE> *gs=new GatingSet<FRAMETYPE>(archive);
+	GatingSet *gs=new GatingSet(archive);
 	gs->clone(gs->getSamples());
 
 }
@@ -221,11 +219,11 @@ void parser_test(testCase & myTest){
 	else
 		archiveName = archiveName.append(".dat");
 //	unsigned short wsType = myTest.wsType;
-		boost::scoped_ptr<GatingSet<FRAMETYPE>> gs;
+		boost::scoped_ptr<GatingSet> gs;
 		if(isLoadArchive)
 		{
 
-			gs.reset(new GatingSet<FRAMETYPE>(archiveName));
+			gs.reset(new GatingSet(archiveName));
 
 		}
 		else
@@ -243,7 +241,7 @@ void parser_test(testCase & myTest){
 			if(!isLoadArchive)
 			{
 				workspace * ws = openWorkspace(myTest.filename, myTest.sampNloc,myTest.xmlParserOption);
-				gs.reset(ws->ws2gs<FRAMETYPE>(sampleIDs,isParseGate,sampleNames));
+				gs.reset(ws->ws2gs(sampleIDs,isParseGate,sampleNames));
 				delete ws;
 			}
 
@@ -262,7 +260,7 @@ void parser_test(testCase & myTest){
 
 		string curSample=samples.at(0);
 
-		GatingHierarchy<FRAMETYPE>& gh=gs->getGatingHierarchy(curSample);
+		GatingHierarchy& gh=gs->getGatingHierarchy(curSample);
 
 //		gh_accessor_test(gh);
 
@@ -279,9 +277,8 @@ void parser_test(testCase & myTest){
 			 start = std::clock();
 			 FCS_READ_PARAM config;
 
-			MemCytoFrame frm(myTest.fcs, config, true);
 
-			gh.setframe(frm);
+			gh.set_frame_ptr(new MemCytoFrame(myTest.fcs, config, true));
 			gh.load_fdata_cache();//
 			gh.transforming(1);
 			gh.gating(0, true);

@@ -212,12 +212,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // gating
-void gating(XPtr<GatingSet> gs, NumericMatrix orig, string sampleName, NumericVector gainsVec, unsigned short nodeInd, bool recompute, float extend_val, bool ignore_case, bool computeTerminalBool, float timestep);
-RcppExport SEXP _flowWorkspace_gating(SEXP gsSEXP, SEXP origSEXP, SEXP sampleNameSEXP, SEXP gainsVecSEXP, SEXP nodeIndSEXP, SEXP recomputeSEXP, SEXP extend_valSEXP, SEXP ignore_caseSEXP, SEXP computeTerminalBoolSEXP, SEXP timestepSEXP) {
+void gating(XPtr<GatingSet> gs, string fcs, string sampleName, NumericVector gainsVec, unsigned short nodeInd, bool recompute, float extend_val, bool ignore_case, bool computeTerminalBool, float timestep);
+RcppExport SEXP _flowWorkspace_gating(SEXP gsSEXP, SEXP fcsSEXP, SEXP sampleNameSEXP, SEXP gainsVecSEXP, SEXP nodeIndSEXP, SEXP recomputeSEXP, SEXP extend_valSEXP, SEXP ignore_caseSEXP, SEXP computeTerminalBoolSEXP, SEXP timestepSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gs(gsSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type orig(origSEXP);
+    Rcpp::traits::input_parameter< string >::type fcs(fcsSEXP);
     Rcpp::traits::input_parameter< string >::type sampleName(sampleNameSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type gainsVec(gainsVecSEXP);
     Rcpp::traits::input_parameter< unsigned short >::type nodeInd(nodeIndSEXP);
@@ -226,7 +226,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type ignore_case(ignore_caseSEXP);
     Rcpp::traits::input_parameter< bool >::type computeTerminalBool(computeTerminalBoolSEXP);
     Rcpp::traits::input_parameter< float >::type timestep(timestepSEXP);
-    gating(gs, orig, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep);
+    gating(gs, fcs, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep);
     return R_NilValue;
 END_RCPP
 }
@@ -401,8 +401,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // parseWorkspace
-XPtr<GatingSet> parseWorkspace(string fileName, StringVec sampleIDs, StringVec sampleNames, bool isParseGate, unsigned short sampNloc, int xmlParserOption, unsigned short wsType);
-RcppExport SEXP _flowWorkspace_parseWorkspace(SEXP fileNameSEXP, SEXP sampleIDsSEXP, SEXP sampleNamesSEXP, SEXP isParseGateSEXP, SEXP sampNlocSEXP, SEXP xmlParserOptionSEXP, SEXP wsTypeSEXP) {
+XPtr<GatingSet> parseWorkspace(string fileName, StringVec sampleIDs, StringVec sampleNames, bool isParseGate, unsigned short sampNloc, int xmlParserOption, bool isH5);
+RcppExport SEXP _flowWorkspace_parseWorkspace(SEXP fileNameSEXP, SEXP sampleIDsSEXP, SEXP sampleNamesSEXP, SEXP isParseGateSEXP, SEXP sampNlocSEXP, SEXP xmlParserOptionSEXP, SEXP isH5SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -412,8 +412,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type isParseGate(isParseGateSEXP);
     Rcpp::traits::input_parameter< unsigned short >::type sampNloc(sampNlocSEXP);
     Rcpp::traits::input_parameter< int >::type xmlParserOption(xmlParserOptionSEXP);
-    Rcpp::traits::input_parameter< unsigned short >::type wsType(wsTypeSEXP);
-    rcpp_result_gen = Rcpp::wrap(parseWorkspace(fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, wsType));
+    Rcpp::traits::input_parameter< bool >::type isH5(isH5SEXP);
+    rcpp_result_gen = Rcpp::wrap(parseWorkspace(fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, isH5));
     return rcpp_result_gen;
 END_RCPP
 }

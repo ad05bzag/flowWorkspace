@@ -10,8 +10,10 @@
 #include "flowWorkspace/openWorkspace.hpp"
 #include <Rcpp.h>
 using namespace Rcpp;
+using namespace cytolib;
+using namespace cytoml;
 CYTOLIB_INIT()
-
+CYTOML_INIT()
 
 GatingSet * getGsPtr(SEXP _gsPtr){
 
@@ -34,9 +36,9 @@ GatingSet * getGsPtr(SEXP _gsPtr){
 XPtr<GatingSet> parseWorkspace(string fileName,StringVec sampleIDs
                             ,StringVec sampleNames,bool isParseGate
                             ,unsigned short sampNloc,int xmlParserOption
-                            , unsigned short wsType) 
+                            , bool isH5)
 {
-		workspace * ws = openWorkspace(fileName, sampNloc,xmlParserOption, wsType);
+		workspace * ws = openWorkspace(fileName, sampNloc==1?SAMPLE_NAME_LOCATION::KEY_WORD:SAMPLE_NAME_LOCATION::SAMPLE_NODE,xmlParserOption);
 		GatingSet * gs = ws->ws2gs(sampleIDs,isParseGate,sampleNames);
 		delete ws;
 		return XPtr<GatingSet>(gs);

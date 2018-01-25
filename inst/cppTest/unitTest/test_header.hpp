@@ -43,10 +43,10 @@ struct testCase{
 //	vector<double> times;//global variable to collect run time
 
 } ;
-typedef MemCytoFrame FRAMETYPE;
 
-void gs_gating(GatingSet<FRAMETYPE> &gs,string curSample, string fcs, map<string,float> &gains);
-void gh_counts(GatingHierarchy<FRAMETYPE>& gh,vector<bool> &isEqual, const float tolerance);
+
+void gs_gating(GatingSet &gs,string curSample, string fcs, map<string,float> &gains);
+void gh_counts(GatingHierarchy& gh,vector<bool> &isEqual, const float tolerance);
 void clone_test(testCase myTest);
 //void gs_parse(testCase,unsigned short,bool,bool);
 void parser_test(testCase &);

@@ -511,7 +511,7 @@ setMethod("parseWorkspace",signature("flowJoWorkspace"),function(obj, ...){
       , includeGates = includeGates
       , sampNloc = sampNloc
       , xmlParserOption = xmlParserOption
-      , wsType = wsType
+      , isH5 = isH5
   )
   
 #	message("c++ parsing done!")

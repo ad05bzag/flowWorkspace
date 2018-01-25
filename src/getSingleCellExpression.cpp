@@ -6,7 +6,7 @@
 // #include "include/transformation.hpp"
 using namespace std;
 using namespace Rcpp;
-
+using namespace cytolib;
 //[[Rcpp::plugins(temp)]] 
 
 /**

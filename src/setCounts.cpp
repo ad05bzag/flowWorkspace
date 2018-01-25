@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 #include <cytolib/GatingSet.hpp>
-
+using namespace cytolib;
 using namespace Rcpp;
 
 /*
