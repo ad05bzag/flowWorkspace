@@ -34,12 +34,12 @@ GatingSet * getGsPtr(SEXP _gsPtr){
  */
 //[[Rcpp::export(name=".cpp_parseWorkspace")]]
 XPtr<GatingSet> parseWorkspace(string fileName,StringVec sampleIDs
-                            ,StringVec sampleNames,bool isParseGate
+                            ,StringVec sample_uids,bool isParseGate
                             ,unsigned short sampNloc,int xmlParserOption
                             , bool isH5)
 {
 		workspace * ws = openWorkspace(fileName, sampNloc==1?SAMPLE_NAME_LOCATION::KEY_WORD:SAMPLE_NAME_LOCATION::SAMPLE_NODE,xmlParserOption);
-		GatingSet * gs = ws->ws2gs(sampleIDs,isParseGate,sampleNames);
+		GatingSet * gs = ws->ws2gs(sampleIDs,isParseGate,sample_uids);
 		delete ws;
 		return XPtr<GatingSet>(gs);
 
@@ -48,10 +48,9 @@ XPtr<GatingSet> parseWorkspace(string fileName,StringVec sampleIDs
 
 
 //[[Rcpp::export(name=".cpp_getSamples")]]
-StringVec getSamples(XPtr<GatingSet> gsPtr) {
+StringVec get_sample_uids(XPtr<GatingSet> gsPtr) {
 
-	return gsPtr->getSamples();
-
+	return gsPtr->get_sample_uids();
 }
 
 /*
@@ -59,16 +58,16 @@ StringVec getSamples(XPtr<GatingSet> gsPtr) {
  */
 //[[Rcpp::export(name=".cpp_NewGatingSet")]]
 XPtr<GatingSet> NewGatingSet(XPtr<GatingSet> gsPtr
-               ,string sampleName
-               ,StringVec newSampleNames) 
+               ,string src_sample_uid
+               ,StringVec new_sample_uids)
   {
 
-		GatingHierarchy & gh=gsPtr->getGatingHierarchy(sampleName);
+		GatingHierarchy & gh=gsPtr->getGatingHierarchy(src_sample_uid);
 
 		/*
 		 * used gh as the template to clone multiple ghs in the new gs
 		 */
-		GatingSet * newGS=new GatingSet(gh,newSampleNames);
+		GatingSet * newGS=new GatingSet(gh,new_sample_uids);
 
 		/*
 		 * using default finalizer to delete gs,which is triggered by gc() when
@@ -83,9 +82,9 @@ XPtr<GatingSet> NewGatingSet(XPtr<GatingSet> gsPtr
  * constructing GatingSet with only root node for each sample
  */
 //[[Rcpp::export(name=".cpp_NewGatingSet_rootOnly")]]
-XPtr<GatingSet> NewGatingSet_rootOnly(StringVec sampleNames) {
+XPtr<GatingSet> NewGatingSet_rootOnly(StringVec new_sample_uids) {
 
-		GatingSet * newGS=new GatingSet(sampleNames);
+		GatingSet * newGS=new GatingSet(new_sample_uids);
 
 		return XPtr<GatingSet>(newGS);
 
@@ -109,9 +108,9 @@ XPtr<GatingSet> loadGatingSet(string fileName) {
 
 
 //[[Rcpp::export(name=".cpp_CloneGatingSet")]]
-XPtr<GatingSet> CloneGatingSet(XPtr<GatingSet> gs,StringVec samples) {
+XPtr<GatingSet> CloneGatingSet(XPtr<GatingSet> gs,StringVec new_sample_uids) {
 
-		GatingSet * gs_new=gs->clone(samples);
+		GatingSet * gs_new=gs->clone(new_sample_uids);
 
 		return XPtr<GatingSet>(gs_new);
 
@@ -138,7 +137,7 @@ XPtr<GatingSet> combineGatingSet(Rcpp::List gsList,Rcpp::List sampleList) {
  * change sample name
  */
 //[[Rcpp::export(name=".cpp_setSample")]]
-void setSample(XPtr<GatingSet> gs,string oldName, string newName) {
+void set_sample_uid(XPtr<GatingSet> gs,string oldName, string newName) {
 	
 		gs->setSample(oldName,newName);
 

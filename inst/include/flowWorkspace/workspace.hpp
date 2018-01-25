@@ -231,7 +231,7 @@ public:
 
 	 }
 
-	 GatingSet * ws2gs(vector<string> sampleIDs,bool isParseGate, StringVec sampleNames)
+	 GatingSet * ws2gs(vector<string> sampleIDs,bool isParseGate, StringVec sample_uids)
 	 {
 	 	GatingSet * gs=new GatingSet();
 	 	 /*
@@ -246,23 +246,23 @@ public:
 
 	 	 }
 
-	 	unsigned nSample = sampleNames.size();
+	 	unsigned nSample = sample_uids.size();
 	 	if(nSample!=sampleIDs.size())
 	 		throw(domain_error("Sizes of sampleIDs and sampleNames are not equal!"));
 	 	//contruct gating hiearchy for each sampleID
 	 	for(unsigned i = 0; i < nSample; i++)
 	 	{
 	 		string sampleID = sampleIDs.at(i);
-	 		string sampleName = sampleNames.at(i);
+	 		string sample_uid = sample_uids.at(i);
 	 		if(g_loglevel>=GATING_HIERARCHY_LEVEL)
 	 			COUT<<endl<<"... start parsing sample: "<< sampleID <<"... "<<endl;
 	 		wsSampleNode curSampleNode=getSample(sampleID);
 
-	 		GatingHierarchy & gh = gs->addGatingHierarchy(sampleName);
+	 		GatingHierarchy & gh = gs->addGatingHierarchy(sample_uid);
 	 		ws2gh(gh,curSampleNode,isParseGate,&gTrans,gs->get_globalBiExpTrans(),gs->get_globalLinTrans());
 
 	 		if(g_loglevel>=GATING_HIERARCHY_LEVEL)
-	 			COUT<<"Gating hierarchy created: "<<sampleName<<endl;
+	 			COUT<<"Gating hierarchy created: "<<sample_uid<<endl;
 	 	}
 	 	gs->set_gTrans(gTrans);
 	 	return gs;

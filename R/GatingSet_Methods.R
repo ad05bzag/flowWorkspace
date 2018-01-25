@@ -394,7 +394,7 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
   
   guids <- samples[["guid"]]
   
-  if(!is.null(compensation)){
+  if(!is.nuNamesll(compensation)){
     #replicate the single comp 
     if(is(compensation, "compensation")){
       compensation <- sapply(guids, function(guid)compensation, simplify = FALSE)   
@@ -417,94 +417,40 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
                           ,varMetadata = data.frame(labelDescription="Name",row.names="name")
                           )
 
-  #load the raw data from FCS
-	if(execute)
-	{
-		if(isNcdf){
-			stopifnot(length(grep("ncdfFlow",loadedNamespaces()))!=0)
-			message("Creating ncdfFlowSet...")
-
-			fs <- read.ncdfFlowSet(samples[["file"]],isWriteSlice=FALSE, phenoData = pd, ...)
-		}else{
-			message("Creating flowSet...")
-
-      #read.flowSet would ignore given file names and use sampleNames(pd) if phenoData is given
-      #so we have to modify pd afterwards
-			fs <- read.flowSet(samples[["file"]], ...)
-			sampleNames(fs) <- guids
-		}
-	}else{
-      #create dummy flowSet
-      frList <- sapply(guids, function(thisSample){
-                        mat <- matrix(data = numeric(0))
-                        colnames(mat) <- "FSC-A"
-                        fr <- suppressWarnings(flowFrame(exprs = mat))
-
-                      })
-      fs <- flowSet(frList)
-    }
-
-	#global variable storing prefixed colnames
-    tempenv<-new.env(parent = emptyenv())
-    prefixColNames <- NULL
-    assign("prefixColNames",NULL,tempenv)
-
+ 
 	axis <- apply(samples,1,function(row,tempenv){
 
-        sampleID <- as.numeric(row[["sampleID"]])
-        guid <- row[["guid"]]
-        #get global variable
-        prefixColNames <- tempenv$prefixColNames
-        comp_param_ind <- tempenv$comp_param_ind
-
-
-        # get comp
-        comp <- .cpp_getCompensation( gs@pointer, guid)
-        cid <- comp$cid
-
-
-        ##################################
+     ##################################
     #Compensating the data
     ##################################
-    if(execute)
-	{
-      file <- row[["file"]]
-      cnd <- colnames(fs)
-			message("loading data: ",file);
-
-			if(isNcdf)
-				data <- read.FCS(file, ...)[, cnd]
-			else
-				data <- fs[[guid]]
-
-      #alter colnames(replace "/" with "_") for flowJo X
-      #record the locations where '/' character is detected and will be used to restore it accurately
-      slash_loc <- sapply(cnd, function(thisCol)as.integer(gregexpr("/", thisCol)[[1]]), simplify = FALSE)
-      if(wsType == "vX"){
-        new_cnd <- .fix_channel_slash(cnd, slash_loc)
-          if(!all(new_cnd == cnd)){ #check if needs to update colnames to avoid unneccessary expensive colnames<- call
-            cnd <- new_cnd
-            colnames(data) <- cnd
-
-          }
-
-      }
-
-      compensation <- compensation[[guid]]
-
-		}else{
-         # get kw from ws (We are not sure yet if this R API will always
-         # return keywords from workspace successfully, thus it is currently
-         # only used when execute = FALSE
-         if(!is.null(ws))
-           kw <- getKeywords(ws, sampleID)
-         #use $PnB to determine the number of parameters since {N,R,S) could be
-         #redundant in some workspaces
-         key_names <- unique(names(kw[grep("\\$P[0-9]{1,}B", names(kw))]))
-         key_names <- gsub("B", "N", key_names, fixed = TRUE)
-         cnd <- as.vector(unlist(kw[key_names]))
-
-       }
+#    if(execute)
+#	{
+#      file <- row[["file"]]
+##      cnd <- colnames(fs)
+##
+##      #alter colnames(replace "/" with "_") for flowJo X
+##      #record the locations where '/' character is detected and will be used to restore it accurately
+##      slash_loc <- sapply(cnd, function(thisCol)as.integer(gregexpr("/", thisCol)[[1]]), simplify = FALSE)
+##      if(wsType == "vX"){
+##        new_cnd <- .fix_channel_slash(cnd, slash_loc)
+##       
+##      }
+#
+##      compensation <- compensation[[guid]]
+#
+#		}else{
+#         # get kw from ws (We are not sure yet if this R API will always
+#         # return keywords from workspace successfully, thus it is currently
+#         # only used when execute = FALSE
+#         if(!is.null(ws))
+#           kw <- getKeywords(ws, sampleID)
+#         #use $PnB to determine the number of parameters since {N,R,S) could be
+#         #redundant in some workspaces
+#         key_names <- unique(names(kw[grep("\\$P[0-9]{1,}B", names(kw))]))
+#         key_names <- gsub("B", "N", key_names, fixed = TRUE)
+#         cnd <- as.vector(unlist(kw[key_names]))
+#
+#       }
 
       
           ##################################
@@ -514,8 +460,6 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
           {
 
             message(paste("gating ..."))
-            #stop using gating API of cdf-version because c++ doesn't store the view of ncdfFlowSet anymore
-            mat <- data@exprs #using @ is faster than exprs()
             
             #get gains from keywords
             # # for now we still parse it from data

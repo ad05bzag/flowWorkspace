@@ -308,8 +308,8 @@ BOOST_AUTO_TEST_CASE(JJ)
 	//myTest.wsType = WS_TYPE::WS_MAC;
 	myTest.samples["221"] = "Panel 2_A9001.fcs";
 	myTest.sampNloc=SAMPLE_NAME_LOCATION::KEY_WORD;
-	myTest.ncfile="../output/JJ/data.nc";
-	myTest.colfile="../output/JJ/colnames.txt";
+	myTest.fcs="../wsTestSuite/JJ/Panel 2_A9001.fcs";
+//	myTest.colfile="../output/JJ/colnames.txt";
 	myTest.archive="../output/JJ/gs";
 
 	myTest.tolerance = 0.5;
