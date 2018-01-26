@@ -133,9 +133,9 @@ void gs_gating(GatingSet &gs,string curSample, string fcs, map<string,float> &ga
 
 	gh.load_fdata_cache();//
 	gh.compensate();
-	gh.adjustGate(gains);
-	gh.transformGate();
-	gh.transforming(1);
+//	gh.adjustGate(gains);
+	gh.transform_gate();
+	gh.transform_data();
 	gh.extendGate(0);
 	gh.gating(0,false, true);
 	//sync comp & trans data
@@ -199,7 +199,7 @@ void gh_removeGate(GatingHierarchy& gh){
 void clone_test(testCase myTest){
 	string archive=myTest.archive;
 	GatingSet *gs=new GatingSet(archive);
-	gs->clone(gs->getSamples());
+	gs->clone(gs->get_sample_uids());
 
 }
 
@@ -252,7 +252,7 @@ void parser_test(testCase & myTest){
 		}
 
 
-		vector<string> samples=gs->getSamples();
+		vector<string> samples=gs->get_sample_uids();
 		for(vector<string>::iterator it=samples.begin();it!=samples.end();it++)
 			cout<<*it<<endl;
 
@@ -280,7 +280,7 @@ void parser_test(testCase & myTest){
 
 			gh.set_frame_ptr(new MemCytoFrame(myTest.fcs, config, true));
 			gh.load_fdata_cache();//
-			gh.transforming(1);
+			gh.transform_data();
 			gh.gating(0, true);
 			gh.release_fdata_cache(false);
 

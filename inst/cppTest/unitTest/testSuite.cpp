@@ -315,9 +315,9 @@ BOOST_AUTO_TEST_CASE(JJ)
 	myTest.tolerance = 0.5;
 
 
-	map<string,float> gains;
-	gains["Time"] = 0.01;
-	myTest.gains = gains;
+//	map<string,float> gains;
+//	gains["Time"] = 0.01;
+//	myTest.gains = gains;
 	vector<VertexID> skip;
 	skip.push_back(174);
 	myTest.skipPops = skip;

@@ -465,72 +465,9 @@ setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".
             # # for now we still parse it from data
             # # once confirmed that workspace is a reliable source for this info
             # # we can parse it from ws as well
-            this_pd <- pData(parameters(data))
-            # #skip time channel since the time channel of gates are already stored at gained scale (instead of raw scale)
-            time.ind <- grepl("time", this_pd[["name"]], ignore.case = TRUE)
-            # this_pd <- subset(this_pd, !time.ind)
-            # paramIDs <- rownames(this_pd)
-            # key_names <- paste(paramIDs,"G",sep="")
-            kw <- keyword(data)
-            # if(as.numeric(kw[["FCSversion"]])>=3&&wsType!="vX"){
-            #   kw_gains <- kw[key_names]
-            # 
-            #   # For keywords where the gain is not set, the gain is NULL.
-            #   # We replace these instances with the default of 1.
-            #   kw_gains[sapply(kw_gains, is.null)] <- 1
-            # 
-            #   gains <- as.numeric(kw_gains)
-            # }else{
-            #   gains <- rep(1,length(paramIDs))
-            # }
-            # 
-            # names(gains) <- this_pd$name
-            # gains <- gains[gains != 1]#only pass the valid gains to save the unnecessary computing
-            gains <- numeric()#gain is no longer relevant
-            names(gains) <- character()
-            #update colnames in order for the gating to find right dims
-            if(!is.null(prefixColNames)){
-              dimnames(mat) <- list(NULL, prefixColNames)
-            }
 
-            recompute <- !transform #recompute flag controls whether gates and data need to be transformed
-            nodeInd <- 0
-
-            if(any(time.ind)){
-              time.range <- range(mat[, time.ind])
-              timestep <- compute.timestep(kw, time.range, timestep.source  = timestep.source) #timestep is used to convert time channel to seconds
-            }else
-              timestep <- 1
-
-
-            .cpp_gating(gs@pointer, file, guid, gains, nodeInd, recompute, extend_val, channel.ignore.case, leaf.bool, timestep)
-#            browser()
-            #restore the non-prefixed colnames for updating data in fs with [[<-
-            #since colnames(fs) is not udpated yet.
-            if(!is.null(prefixColNames)){
-              #restore the orig colnames(replace "_" with "/") for flowJo X
-              if(wsType == "vX"){
-                #use slash locations to avoid tamper the original '_' character in channel names
-                old_cnd <- .fix_channel_slash(cnd, slash_loc)
-
-                if(!all(old_cnd == cnd)){ #check if needs to update colnames to avoid unneccessary expensive colnames<- call
-                  cnd <- old_cnd
-                  colnames(data) <- cnd #restore colnames for flowFrame as well for flowJo vX
-                }
-
-              }
-              dimnames(mat) <- list(NULL, cnd)
-            }
-
-            data@exprs <- mat #circumvent the validity check of exprs<- to speed up
-
-            if(isNcdf){
-              fs[[guid]] <- data
-
-            }else{
-              assign(guid,data,fs@frames)
-            }
-            #range info within parameter object is not always the same as the real data range
+            .cpp_gating(gs@pointer, file, guid, 0, recompute, extend_val, channel.ignore.case, leaf.bool)
+#           #range info within parameter object is not always the same as the real data range
             #it is used to display the data.
             #so we need update this range info by transforming it
             tInd <- grepl("[Tt]ime",cnd)

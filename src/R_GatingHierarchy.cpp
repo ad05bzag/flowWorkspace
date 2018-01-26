@@ -274,10 +274,9 @@ void computeGates(XPtr<GatingSet> gs,string sampleName
 void gating(XPtr<GatingSet> gs
               , string fcs
               ,string sampleName
-              ,NumericVector gainsVec
               , unsigned short nodeInd
               ,bool recompute, float extend_val
-              , bool ignore_case, bool computeTerminalBool, float timestep){
+              , bool ignore_case, bool computeTerminalBool){
 
  
 	GatingHierarchy & gh=gs->getGatingHierarchy(sampleName);
@@ -290,15 +289,15 @@ void gating(XPtr<GatingSet> gs
 	if(!recompute)
 	{
 	
-		map<string,float> gains;
-		vector<string> chnlNames = gainsVec.names();
-		for(vector<string>::iterator it=chnlNames.begin();it<chnlNames.end();it++){
-			gains[*it]=gainsVec[*it];
-		}
+//		map<string,float> gains;
+//		vector<string> chnlNames = gainsVec.names();
+//		for(vector<string>::iterator it=chnlNames.begin();it<chnlNames.end();it++){
+//			gains[*it]=gainsVec[*it];
+//		}
 
-		gh.adjustGate(gains);
-		gh.transformGate();
-		gh.transforming(timestep);
+//		gh.adjustGate(gains);
+		gh.transform_gate();
+		gh.transform_data();
 		gh.extendGate(extend_val);
 	}
 
