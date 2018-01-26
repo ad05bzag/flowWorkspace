@@ -29,84 +29,6 @@ GatingSet * getGsPtr(SEXP _gsPtr){
 
 
 
-//[[Rcpp::export(name=".cpp_gating")]]
-void gating(XPtr<GatingSet> gs,DataFrame samples
-				, bool compute_data
-        		, float extend_val, float extend_to
-              , unsigned short nodeInd
-              ,bool recompute
-              , bool ignore_case, bool computeTerminalBool){
-
-  StringVector uid = samples["uid"];
-  StringVector fcs_path = samples["fcs_path"];
-  StringVector name = samples["name"];
-  StringVector workspace_sampleID = samples["workspace_sampleID"];
-  List compensation = samples["compensation"];
-  unsigned nSamples = samples.nrows();
-  vector<SampleInfo> sample_info(nSamples);
-  for(unsigned i = 0; i < nSamples; i++)
-  {
-    sample_info[i].uid = uid[i];
-    sample_info[i].fcs_path = fcs_path[i];
-    sample_info[i].name = name[i];
-    sample_info[i].workspace_sampleID = workspace_sampleID[i];
-    sample_info[i].uid = uid[i];
-  }
-      
-  	if(compute_data)
-  	{
-  
-  		GatingHierarchy & gh=gs->getGatingHierarchy(uid[i]);
-  
-  		FCS_READ_PARAM config;
-  		gh.set_frame_ptr(new MemCytoFrame(fcs, config, true));
-  		gh.load_fdata_cache();//
-  		if(!recompute)
-  		{
-  
-  			gh.transform_gate();
-  			gh.transform_data();
-  			gh.extendGate(extend_val);
-  		}
-  
-  		gh.gating(nodeInd,recompute, computeTerminalBool);
-  
-  		gh.release_fdata_cache(true);
-  
-  	}
-  	else
-  	{
-  		/*
-  		 * compute gates(i.e. extending, adjust, transfroming) without doing the actual gating
-  		 * mainly used for extacting gates from workspace only
-  		 */
-  
-  		gh.extendGate(extend_val, extend_to);
-  		gh.transform_gate();
-  
-  	}
-  }
-}
-
-/*
- * constructing GatingSet from xml file
- * _sampleNames should be provided since the additional keys besides sample name may be necessary to uniquely tag each sample
- */
-//[[Rcpp::export(name=".cpp_parseWorkspace")]]
-XPtr<GatingSet> parseWorkspace(string fileName,StringVec sampleIDs
-                            ,StringVec sample_uids,bool isParseGate
-                            ,unsigned short sampNloc,int xmlParserOption
-                            , bool isH5)
-{
-		workspace * ws = openWorkspace(fileName, sampNloc==1?SAMPLE_NAME_LOCATION::KEY_WORD:SAMPLE_NAME_LOCATION::SAMPLE_NODE,xmlParserOption);
-		GatingSet * gs = ws->ws2gs(sampleIDs,isParseGate,sample_uids);
-		delete ws;
-		return XPtr<GatingSet>(gs);
-
-
-}
-
-
 //[[Rcpp::export(name=".cpp_getSamples")]]
 StringVec get_sample_uids(XPtr<GatingSet> gsPtr) {
 
@@ -203,21 +125,3 @@ void set_sample_uid(XPtr<GatingSet> gs,string oldName, string newName) {
 
 }
 
-//[[Rcpp::export(name=".cpp_getLogLevel")]]
-unsigned short getLogLevel() {
-
-		return(g_loglevel);
-
-}
-
-//[[Rcpp::export(name=".cpp_setLogLevel")]]
-void setLogLevel(unsigned short loglevel) {
-
-		g_loglevel = loglevel;
-
-}
-
-//[[Rcpp::export(name=".cpp_togleErrorFlag")]]
-void toggleErrorFlag(){
-	my_throw_on_error = !my_throw_on_error;
-}

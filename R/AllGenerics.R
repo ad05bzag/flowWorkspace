@@ -6,12 +6,6 @@ NULL
 setGeneric("summary",function(object,...)standardGeneric("summary"))
 
 #' @export
-setGeneric("openWorkspace", function(file,...)standardGeneric("openWorkspace"))
-
-#' @export
-setGeneric("closeWorkspace",function(workspace)standardGeneric("closeWorkspace"))
-
-#' @export
 setGeneric("parseWorkspace",function(obj,...)standardGeneric("parseWorkspace"))
 
 #' @export
@@ -63,19 +57,11 @@ setGeneric("getProp",function(x,y,...)standardGeneric("getProp"))
 setGeneric("getTotal",function(x,y,...)standardGeneric("getTotal"))
 
 #' @export
-setGeneric("getSamples",function(x,...)standardGeneric("getSamples"))
-
-#' @export
-setGeneric("getSampleGroups",function(x)standardGeneric("getSampleGroups"))
-
-#' @export
 setGeneric("getCompensationMatrices",function(x)standardGeneric("getCompensationMatrices"))
 
 #' @export
 setGeneric("getTransformations",function(x, ...)standardGeneric("getTransformations"))
 
-#' @export
-setGeneric("getKeywords",function(obj,y, ...)standardGeneric("getKeywords"))
 
 #' @export
 setGeneric("getSingleCellExpression",function(x, nodes,...)standardGeneric("getSingleCellExpression"))

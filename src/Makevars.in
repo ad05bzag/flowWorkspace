@@ -10,24 +10,3 @@ CXX_STD = CXX11
 PKG_CPPFLAGS =-DROUT -I../inst/include/ @PKG_CPPFLAGS@
 PKG_LIBS =`${R_HOME}/bin/Rscript -e "RProtoBufLib:::LdFlags();cat(' ');Rhdf5lib::pkgconfig('PKG_CXX_LIBS')"` @PKG_LIBS@ 
 
-USERDIR = ${R_PACKAGE_DIR}/lib${R_ARCH}
-PKGLIB = ${USERDIR}/libflowWorkspace.a
-
- 
-all:  $(SHLIB)
-	if [ `uname -s` = 'Darwin' ]; then install_name_tool -change /usr/local/clang4/lib/libc++.1.dylib /usr/lib/libc++.1.dylib $(SHLIB); fi
-
-$(SHLIB): $(PKGLIB)
-
-
-#expose static lib for other package to link to 
-$(PKGLIB): $(OBJECTS)
-	mkdir -p "${USERDIR}"
-	$(AR) rs "${PKGLIB}" $(OBJECTS)
-
-
-.PHONY: 	all clean 
-
-clean:
-		rm -f $(OBJECTS) $(SHLIB)
- 

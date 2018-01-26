@@ -25,49 +25,6 @@ NULL
 #' @author Greg Finak, Mike Jiang
 #' @references \url{http://www.rglab.org/}
 NULL
-
-#' @importClassesFrom XML XMLInternalDocument
-setOldClass("XMLInternalDocument")
-
-#' An R representation of a flowJo workspace.
-#' 
-#' Objects can be created by calls of the form \code{new("flowJoWorkspace.xml", ...)}.
-#'
-#' @section Slots: 
-#' \describe{
-#'   \item{\code{version}:}{Object of class \code{"character"}. The version of the XML workspace. }
-#'   \item{\code{file}:}{Object of class \code{"character"}. The file name. }
-#'   \item{\code{.cache}:}{Object of class \code{"environment"}. An environment for internal use.  }
-#' 	\item{\code{path}:}{Object of class \code{"character"}. The path to the file. }
-#'   \item{\code{doc}:}{Object of class \code{"XMLInternalDocument"}. The XML document object. }
-#'   \item{\code{options}:}{Object of class \code{"integer"}. The XML parsing options passed to \code{\link{xmlTreeParse}}. }
-#'   }
-#' 
-#' @seealso 
-#'   \code{\linkS4class{GatingSet}} 
-#'   \code{\linkS4class{GatingHierarchy}}
-#' 
-#' @examples
-#'   require(flowWorkspaceData)
-#'   d<-system.file("extdata",package="flowWorkspaceData")
-#'   wsfile<-list.files(d,pattern="A2004Analysis.xml",full=TRUE)
-#'   ws <- openWorkspace(wsfile);
-#'   ws
-#'   getSamples(ws)
-#' 
-#' @name flowJoWorkspace-class
-#' @rdname flowJoWorkspace-class
-#' @exportClass flowJoWorkspace
-#' @aliases 
-#' show,flowJoWorkspace-method
-setClass("flowJoWorkspace"
-          ,representation(version="character"
-                          , file="character"
-                          , .cache="environment"
-                          , path="character"
-                          , doc="XMLInternalDocument"
-                          , options="integer")
-                        )
                         
 .uuid_gen<-function(){
 #  system("uuidgen",intern = TRUE)
