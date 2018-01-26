@@ -333,13 +333,17 @@ BOOST_AUTO_TEST_CASE(JJ)
 BOOST_AUTO_TEST_CASE(treg)
 {
 	myTest.filename="../wsTestSuite/McGill/Treg/20131206_Treg.1.ellipseidGate.wsp";
-	//myTest.wsType = WS_TYPE::WS_VX;
-	myTest.samples["9"] = "samples_F4.fcs";
 	myTest.sampNloc=SAMPLE_NAME_LOCATION::KEY_WORD;
-	myTest.fcs="../wsTestSuite/McGill/Treg/samples_F4.fcs";
-//	myTest.colfile="../output/McGill/Treg/colnames.txt";
 	myTest.archive="../output/McGill/Treg/gs";
-
+	myTest.sample_info = {
+							{ "samples_F4.fcs" //uid
+							 , "samples_F4.fcs"//name
+							 , "../wsTestSuite/McGill/Treg/samples_F4.fcs" //fcs_path
+							 , "9" //workspace_sampleID
+							}
+							};
+	myTest.isH5 = false;
+	myTest.h5_path = "../output/McGill/Treg/test.h5";
 	parser_test(myTest);
 
 	vector<bool> isTrue(myTest.isEqual.size(), true);

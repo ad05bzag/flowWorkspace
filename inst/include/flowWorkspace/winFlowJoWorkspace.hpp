@@ -830,7 +830,7 @@ public:
 
 		return res;
 	}
-
+	bool is_fix_slash_in_channel_name(){return true;};
 };
 };
 #endif /* WINFLOWJOWORKSPACE_HPP_ */

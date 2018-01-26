@@ -247,66 +247,7 @@ List getTransformations(XPtr<GatingSet> gs,string sampleName, bool inverse){
 	return (res);
 }
 
-/*
- * compute gates(i.e. extending, adjust, transfroming) without doing the actual gating
- * mainly used for extacting gates from workspace only
- */
-//[[Rcpp::export(name=".cpp_computeGates")]]
-void computeGates(XPtr<GatingSet> gs,string sampleName
-                    ,NumericVector gainsVec
-                    , float extend_val, float extend_to){
 
-	GatingHierarchy & gh=gs->getGatingHierarchy(sampleName);
-
-	map<string,float> gains;
-	vector<string> chnlNames = gainsVec.names();
-	for(vector<string>::iterator it=chnlNames.begin();it<chnlNames.end();it++){
-		gains[*it]=gainsVec[*it];
-	}
-	gh.extendGate(extend_val, extend_to);
-	gh.adjustGate(gains);
-	gh.transformGate();
-
-}
-
-
-//[[Rcpp::export(name=".cpp_gating")]]
-void gating(XPtr<GatingSet> gs
-              , string fcs
-              ,string sampleName
-              , unsigned short nodeInd
-              ,bool recompute, float extend_val
-              , bool ignore_case, bool computeTerminalBool){
-
- 
-	GatingHierarchy & gh=gs->getGatingHierarchy(sampleName);
-
-//	Rcpp::NumericMatrix orig(mat);
-	unsigned sampleID=numeric_limits<unsigned>::max();//dummy sample index
-	FCS_READ_PARAM config;
-	gh.set_frame_ptr(new MemCytoFrame(fcs, config, true));
-	gh.load_fdata_cache();//
-	if(!recompute)
-	{
-	
-//		map<string,float> gains;
-//		vector<string> chnlNames = gainsVec.names();
-//		for(vector<string>::iterator it=chnlNames.begin();it<chnlNames.end();it++){
-//			gains[*it]=gainsVec[*it];
-//		}
-
-//		gh.adjustGate(gains);
-		gh.transform_gate();
-		gh.transform_data();
-		gh.extendGate(extend_val);
-	}
-
-	gh.gating(nodeInd,recompute, computeTerminalBool);
-
-	gh.release_fdata_cache(true);
-
-
-}
 
 
 //[[Rcpp::export(name=".cpp_getGate")]]

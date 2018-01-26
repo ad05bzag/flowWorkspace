@@ -41,7 +41,9 @@ struct testCase{
 	map<string,float> gains;
 	vector<VertexID> skipPops;
 //	vector<double> times;//global variable to collect run time
-
+	vector<SampleInfo> sample_info;
+	bool isH5;
+	string h5_path;
 } ;
 
 

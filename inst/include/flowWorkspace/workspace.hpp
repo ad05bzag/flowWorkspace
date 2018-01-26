@@ -53,7 +53,13 @@ struct xpath{
 	SAMPLE_NAME_LOCATION sampNloc;//get FCS filename(or sampleName) from either $FIL keyword or name attribute of sampleNode
 };
 
-
+struct SampleInfo{
+	string uid;
+	string name;
+	string fcs_path;
+	string workspace_sampleID;
+	compensation comp;
+};
 class workspace{
 public:
 	 xpath nodePath;
@@ -91,6 +97,7 @@ public:
 	 virtual gate * getGate(wsPopNode &)=0;//gate is dynamically allocated within this function,it is currently freed within gate pointer owner object nodeProperties
 	 virtual void to_popNode(wsRootNode &, nodeProperties &)=0;
 	 virtual void to_popNode(wsPopNode &,nodeProperties &,bool isGating)=0;
+	 virtual bool is_fix_slash_in_channel_name(){return false;}
 	 void toArray(string sCalTable, vector<double> &x, vector<double> &y)
 	 {
 		 vector<string> stringVec;
@@ -231,7 +238,7 @@ public:
 
 	 }
 
-	 GatingSet * ws2gs(vector<string> sampleIDs,bool isParseGate, StringVec sample_uids)
+	 GatingSet * ws2gs(vector<SampleInfo> sample_info,bool isParseGate)
 	 {
 	 	GatingSet * gs=new GatingSet();
 	 	 /*
@@ -246,23 +253,18 @@ public:
 
 	 	 }
 
-	 	unsigned nSample = sample_uids.size();
-	 	if(nSample!=sampleIDs.size())
-	 		throw(domain_error("Sizes of sampleIDs and sampleNames are not equal!"));
 	 	//contruct gating hiearchy for each sampleID
-	 	for(unsigned i = 0; i < nSample; i++)
+	 	for(auto & p : sample_info)
 	 	{
-	 		string sampleID = sampleIDs.at(i);
-	 		string sample_uid = sample_uids.at(i);
 	 		if(g_loglevel>=GATING_HIERARCHY_LEVEL)
-	 			COUT<<endl<<"... start parsing sample: "<< sampleID <<"... "<<endl;
-	 		wsSampleNode curSampleNode=getSample(sampleID);
+	 			COUT<<endl<<"... start parsing sample: "<< p.workspace_sampleID <<"... "<<endl;
+	 		wsSampleNode curSampleNode=getSample(p.workspace_sampleID);
 
-	 		GatingHierarchy & gh = gs->addGatingHierarchy(sample_uid);
+	 		GatingHierarchy & gh = gs->addGatingHierarchy(p.uid);
 	 		ws2gh(gh,curSampleNode,isParseGate,&gTrans,gs->get_globalBiExpTrans(),gs->get_globalLinTrans());
 
 	 		if(g_loglevel>=GATING_HIERARCHY_LEVEL)
-	 			COUT<<"Gating hierarchy created: "<<sample_uid<<endl;
+	 			COUT<<"Gating hierarchy created: "<<p.uid<<endl;
 	 	}
 	 	gs->set_gTrans(gTrans);
 	 	return gs;

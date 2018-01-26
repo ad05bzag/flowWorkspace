@@ -320,396 +320,56 @@ load_gs<-function(path){
 #' @param ... other arguments. see \link{parseWorkspace}
 #' @rdname GatingSet-methods
 #' @export
-setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".", ...){
-            
-			samples <- y
-			dataPaths <- vector("character")
-			excludefiles <- vector("logical")
-			for(file in samples){
-#				browser()
-				#########################################################
-				#get full path for each fcs and store in dataPath slot
-				#########################################################
-				##escape "illegal" characters
-				file<-gsub("\\)","\\\\)",gsub("\\(","\\\\(",file))
-				absPath<-list.files(pattern=paste("^",file,"$",sep=""),path=path,recursive=TRUE,full.names=TRUE)
-
-				if(length(absPath)==0){
-					warning("Can't find ",file," in directory: ",path,"\n");
-					excludefiles<-c(excludefiles,TRUE);
-
-				}else{
-					dataPaths<-c(dataPaths,dirname(absPath[1]))
-					excludefiles<-c(excludefiles,FALSE);
-				}
-			}
-			#Remove samples where files don't exist.
-			if(length(which(excludefiles))>0){
-				message("Removing ",length(which(excludefiles))," samples from the analysis since we can't find their FCS files.");
-				samples<-samples[!excludefiles];
-			}
-
-
-			files<-file.path(dataPaths,samples)
-			Object<-new("GatingSet")
-			message("generating new GatingSet from the gating template...")
-			Object@pointer <- .cpp_NewGatingSet(x@pointer,sampleNames(x),samples)
-      Object@guid <- .uuid_gen()
-
-      sampletbl <- data.frame(sampleID = NA, name = basename(samples), file = files, guid = basename(samples), stringsAsFactors = FALSE)
-			Object <- .addGatingHierarchies(Object,samples = sampletbl,execute=TRUE,...)
-            #if the gating template is already gated, it needs to be recompute explicitly
-            #in order to update the counts
-            #otherwise, the counts should already have been updated during the copying
-            #and not need to do this step
-            if(x@flag)
-              recompute(Object)
-            message("done!")
-			return(Object)
-		})
-
-
-
-#' 1. loads the raw data (when execute == TRUE)
-#' 2. compensate and transform the data (when execute == TRUE)
-#' 3. transform gates(extend and apply gains when applicable)
-#' 4. compute the stats (when execute == TRUE)
-#'
-#' @param prefix a \code{logical} flag indicates whether the colnames needs to be updated with prefix(e.g. "<>" or "comp") specified by compensations
-#' @param channel.ignore.case a \code{logical} flag indicates whether the colnames(channel names) matching needs to be case sensitive (e.g. compensation, gating..)
-#' @param extend_val \code{numeric} the threshold that determine wether the gates need to be extended. default is 0. It is triggered when gate coordinates are below this value.
-#' @param extend_to \code{numeric} the value that gate coordinates are extended to. Default is -4000. Usually this value will be automatically detected according to the real data range.
-#'                                  But when the gates needs to be extended without loading the raw data (i.e. \code{execute} is set to FALSE), then this hard-coded value is used.
-#' @param transform \code{logical} to enable/disable transformation of gates and data. Default is TRUE. It is mainly for debug purpose (when the raw gates need to be parsed.
-#' @importFrom Biobase AnnotatedDataFrame
-.addGatingHierarchies <- function(gs, samples, execute,isNcdf = TRUE
-                                      ,compensation=NULL,wsType = ""
-                                      , extend_val = 0, extend_to = -4000
-                                      , prefix = TRUE, channel.ignore.case = FALSE
-                                      , ws = NULL, leaf.bool = TRUE, sampNloc = "keyword"
-                                      ,  transform = TRUE, timestep.source = c("TIMESTEP", "BTIM"), ...){
-  timestep.source  <- match.arg(timestep.source )
-  if(nrow(samples)==0)
-    stop("no sample to be added to GatingSet!")
-  
-  guids <- samples[["guid"]]
-  
-  if(!is.nuNamesll(compensation)){
-    #replicate the single comp 
-    if(is(compensation, "compensation")){
-      compensation <- sapply(guids, function(guid)compensation, simplify = FALSE)   
-    }else{
-      if(is.list(compensation)){
-        if(!all(guids %in% names(compensation)))
-          stop("names of the compensation list must match the 'guids' of samples!")
-      }else
-        stop("'compensation' should be either a compensation object of a list of compensation objects!")
-    }
-     
-  }
-  
-
-  #sample names are supplied explicitly through phenoData to optionally use the names other than the original file names
-  pd <- AnnotatedDataFrame(data = data.frame(name = samples[["name"]]
-                                             ,row.names = guids
-                                             ,stringsAsFactors=FALSE
-                                            )
-                          ,varMetadata = data.frame(labelDescription="Name",row.names="name")
-                          )
-
- 
-	axis <- apply(samples,1,function(row,tempenv){
-
-     ##################################
-    #Compensating the data
-    ##################################
-#    if(execute)
-#	{
-#      file <- row[["file"]]
-##      cnd <- colnames(fs)
-##
-##      #alter colnames(replace "/" with "_") for flowJo X
-##      #record the locations where '/' character is detected and will be used to restore it accurately
-##      slash_loc <- sapply(cnd, function(thisCol)as.integer(gregexpr("/", thisCol)[[1]]), simplify = FALSE)
-##      if(wsType == "vX"){
-##        new_cnd <- .fix_channel_slash(cnd, slash_loc)
-##       
-##      }
+#setMethod("GatingSet", c("GatingHierarchy", "character"), function(x, y, path=".", ...){
+#            
+#			samples <- y
+#			dataPaths <- vector("character")
+#			excludefiles <- vector("logical")
+#			for(file in samples){
+##				browser()
+#				#########################################################
+#				#get full path for each fcs and store in dataPath slot
+#				#########################################################
+#				##escape "illegal" characters
+#				file<-gsub("\\)","\\\\)",gsub("\\(","\\\\(",file))
+#				absPath<-list.files(pattern=paste("^",file,"$",sep=""),path=path,recursive=TRUE,full.names=TRUE)
 #
-##      compensation <- compensation[[guid]]
+#				if(length(absPath)==0){
+#					warning("Can't find ",file," in directory: ",path,"\n");
+#					excludefiles<-c(excludefiles,TRUE);
 #
-#		}else{
-#         # get kw from ws (We are not sure yet if this R API will always
-#         # return keywords from workspace successfully, thus it is currently
-#         # only used when execute = FALSE
-#         if(!is.null(ws))
-#           kw <- getKeywords(ws, sampleID)
-#         #use $PnB to determine the number of parameters since {N,R,S) could be
-#         #redundant in some workspaces
-#         key_names <- unique(names(kw[grep("\\$P[0-9]{1,}B", names(kw))]))
-#         key_names <- gsub("B", "N", key_names, fixed = TRUE)
-#         cnd <- as.vector(unlist(kw[key_names]))
+#				}else{
+#					dataPaths<-c(dataPaths,dirname(absPath[1]))
+#					excludefiles<-c(excludefiles,FALSE);
+#				}
+#			}
+#			#Remove samples where files don't exist.
+#			if(length(which(excludefiles))>0){
+#				message("Removing ",length(which(excludefiles))," samples from the analysis since we can't find their FCS files.");
+#				samples<-samples[!excludefiles];
+#			}
 #
-#       }
-
-      
-          ##################################
-          #transforming and gating
-          ##################################
-          if(execute)
-          {
-
-            message(paste("gating ..."))
-            
-            #get gains from keywords
-            # # for now we still parse it from data
-            # # once confirmed that workspace is a reliable source for this info
-            # # we can parse it from ws as well
-
-            .cpp_gating(gs@pointer, file, guid, 0, recompute, extend_val, channel.ignore.case, leaf.bool)
-#           #range info within parameter object is not always the same as the real data range
-            #it is used to display the data.
-            #so we need update this range info by transforming it
-            tInd <- grepl("[Tt]ime",cnd)
-            if(any(tInd))
-              tRg  <- range(mat[,tInd])
-            else
-              tRg <- NULL
-            axis.labels <- .transformRange(gs,guid,wsType,fs@frames,timeRange = tRg, slash_loc, compChnlInd = comp_param_ind)
-
-		}else{
-          #extract gains from keyword of ws
-          #currently it is only used for extracting gates without gating
-          #In future we want to use it for gating as well
-          #once we have confirmed that ws is a reliable source of keyword
-          #EDIT: Acutally we've already found one workspace from PROVIDE study
-          #that does not contain the gain keyword for all channels. So the ws is not reliable source of keyword
-
-
-          gains <- rep(1,length(cnd))#init with default 1
-
-          #get gains from keywords
-          kw_gains <- grep("P[0-9]{1,}G", names(kw))
-
-          if(length(kw_gains) > 0){
-            key_names <- unique(names(kw[kw_gains]))
-            kw_gains <- kw[key_names]
-
-            # Sometimes the keywords where the gain is not set, the gain value is NULL.
-            # We replace these instances with the default of 1.
-            kw_gains[sapply(kw_gains, is.null)] <- 1
-
-            #update the default gain values
-            #extract numeric index from channels (Not every channel necessarily has its gain keyword stored in xml)
-            found_gain_chnl_ind <-  as.numeric(gsub('G$', "", gsub('^\\$P', "", key_names)))
-            gains[found_gain_chnl_ind] <- as.numeric(kw_gains)
-          }
+#
+#			files<-file.path(dataPaths,samples)
+#			Object<-new("GatingSet")
+#			message("generating new GatingSet from the gating template...")
+#			Object@pointer <- .cpp_NewGatingSet(x@pointer,sampleNames(x),samples)
+#      Object@guid <- .uuid_gen()
+#
+#      sampletbl <- data.frame(sampleID = NA, name = basename(samples), file = files, guid = basename(samples), stringsAsFactors = FALSE)
+#			Object <- .addGatingHierarchies(Object,samples = sampletbl,execute=TRUE,...)
+#            #if the gating template is already gated, it needs to be recompute explicitly
+#            #in order to update the counts
+#            #otherwise, the counts should already have been updated during the copying
+#            #and not need to do this step
+#            if(x@flag)
+#              recompute(Object)
+#            message("done!")
+#			return(Object)
+#		})
 
 
 
-
-          names(gains) <- prefixColNames
-          gains <- gains[gains != 1]#only pass the valid gains to save the unnecessary computing
-          #transform and adjust the gates without gating
-          if(transform)
-            .cpp_computeGates(gs@pointer, guid, gains, extend_val, extend_to)
-          axis.labels <- list()
-        }
-
-        #set global variable
-        tempenv$prefixColNames <- prefixColNames
-        tempenv$comp_param_ind <- comp_param_ind
-
-        #return axis.labels
-        axis.labels
-	},tempenv)
-
-    names(axis) <- guids
-    gs@axis <- axis
-    gs@flag <- execute #assume the excution would succeed if the entire G gets returned finally
-
-	if(execute)
-	{
-#		browser()
-        #sync channel info for gates and comps ,trans
-        if(channel.ignore.case){
-          #get non-prefixed channel names
-          raw.cols <- colnames(fs)
-          #since updateChannels does case insensitive matching
-          #so we simply set both old and new columns with raw.cols
-          map <- data.frame(old = raw.cols, new = raw.cols)
-          updateChannels(gs, map, all = FALSE)
-        }
-
-		#update data with prefixed columns
-		#can't do it before fs fully compensated since
-		#compensate function check the consistency colnames between input flowFrame and fs
-		if(!is.null(tempenv$prefixColNames))
-          colnames(fs) <- tempenv$prefixColNames
-
-
-		#attach filename and colnames to internal stucture for gating
-#		browser()
-	}
-
-    flowData(gs) <- fs
-    if(!is.null(compensation))
-      gs@compensation <- compensation[guids] #append the customized compensations provided outside of xml
-	gs
-}
-
-# prefer to $TIMESTEP keyword when it is non NULL
-compute.timestep <- function(kw, unit.range, timestep.source  = c("TIMESTEP", "BTIM")){
-  timestep.source  <- match.arg(timestep.source )
-  #check if $TIMESTEP is available
-  kw.ts <- kw[["$TIMESTEP"]]
-  if(is.null(kw.ts))
-    timestep.source <- "BTIM"
-
-  if(timestep.source  == "TIMESTEP")
-    as.numeric(kw.ts)
-  else{
-
-    btime <- kw[["$BTIM"]]
-    etime <- kw[["$ETIM"]]
-    if(is.null(btime)||is.null(etime))
-      return(1)
-    else{
-      #prefix the 4th section . (replace :) so that strptime recognize the fractional seconds in the input string
-      terms <- rep('([0-9]{2})', 4)
-      pat <- paste(terms, collapse = ":")
-      pat <- paste0("^", pat, "$")
-      rep <- "\\1:\\2:\\3\\.\\4"
-      etime <- sub(pat, rep, etime)
-      btime <- sub(pat, rep, btime)
-      format <- "%H:%M:%OS"
-
-      time.total <- difftime(strptime(etime, format), strptime(btime, format), units = "secs")
-      as.numeric(time.total)/diff(unit.range)
-
-    }
-  }
-}
-#' toggle the channel names between '/' and '_' character
-#'
-#' FlowJoX tends to replace '/' in the original channel names with '_' in gates and transformations.
-#' We need to do the same to the flow data but also need to change it back during the process since
-#' the channel names of the flowSet can't be modified until the data is fully compensated.
-#' @param chnls the channel names
-#' @param slash_loc a list that records the locations of the original slash character within each channel name
-#'                  so that when restoring slash it won't tamper the the original '_' character.
-#' @return the toggled channel names
-#' @importFrom stringr str_sub str_sub<-
-.fix_channel_slash <- function(chnls, slash_loc = NULL){
-  mapply(chnls, slash_loc, FUN = function(thisCol, this_slash){
-        toggleTo <- ifelse(grepl("/", thisCol), "_", "/")
-        #replace each individual /|_ based on their detected location
-        if(any(this_slash > 0))
-        {
-          for(this_loc in this_slash)
-            str_sub(thisCol, this_loc, this_loc) <- toggleTo
-        }
-
-        thisCol
-      }
-      , USE.NAMES = FALSE)
-
-}
-
-#' transform the range slot and construct axis label and pos for the plotting
-#' @param G \code{GatingSet} It is an incomplete GatingSet object which does not have data slot assigned yet.
-#' @param wsType \code{character} flowJo workspace type
-#' @param frmEnv \code{environment} point to the \code{frames} slot of the original \code{flowSet}
-#' @param timeRange \code{numeric} vector specifying the range for 'time' channel
-#'
-#' @return
-#' a \code{list} of axis labels and positions. Also, the \code{range} slot of \code{flowFrame} stored in \code{frmEnv} are transformed as an side effect.
-.transformRange <- function(G,sampleName, wsType,frmEnv, timeRange = NULL, slash_loc = NULL, compChnlInd){
-
-
- trans <- getTransformations(G[[sampleName]], channel = "all")
- comp<-.cpp_getCompensation(G@pointer,sampleName)
- prefix <- comp$prefix
- suffix <- comp$suffix
-  fr <- frmEnv[[sampleName]]
-	rawRange <- range(fr)
-    oldnames <- names(rawRange)
-
-    if(wsType == "vX"&&!is.null(slash_loc)){
-      names(rawRange) <- .fix_channel_slash(oldnames, slash_loc)
-
-    }
-	tempenv<-new.env()
-	assign("axis.labels",list(),envir=tempenv);
-
-    trans_names <-trimWhiteSpace(names(trans))
-
-	datarange <- sapply(1:dim(rawRange)[2],function(i){
-               thisRange <- rawRange[i]
-               this_chnl <- names(thisRange)
-               if(i%in%compChnlInd)
-                 this_chnl <- paste(prefix,this_chnl,suffix,sep="")
-
-               #have to do strict match for vX since trans functions can be defined for both compensated and uncompensated channel
-              j <- match(this_chnl, trans_names)
-              isMatched <- !is.na(j)
-
-				if(isMatched){
-
-					rw <- thisRange[,1]
-                    thisTrans <- trans[[j]]
-                    typeAttr <- attr(thisTrans, "type")
-					if(is.null(typeAttr)||typeAttr!="gateOnly"){
-						r <- thisTrans(rw)
-					}else{
-						r <- rw
-					}
-					###An unfortunate hack. If we use the log transformation, then negative values are undefined, so
-					##We'll test the transformed range for NaN and convert to zero.
-					r[is.nan(r)] <- 0
-
-					###Is this transformed?
-					if(!all(rw==r)){
-
-
-						######################################
-						#pretty ticks by equal interval at raw scale
-						######################################
-						base10raw <- unlist(lapply(2:6,function(e)10^e))
-						base10raw <- c(0,base10raw)
-						raw <- base10raw[base10raw>=min(rw)&base10raw<max(rw)]
-
-						pos <- signif(thisTrans(raw))
-
-
-						assign("this_chnl",this_chnl,tempenv)
-						assign("raw",raw,tempenv);
-						assign("pos",pos,tempenv);
-						eval(expression(axis.labels[[this_chnl]]<-list(label=as.character(raw),at=pos)),envir=tempenv);
-					}
-					return(r);
-				}else{
-
-                  #update time range with the real data range
-                  if(grepl("[Tt]ime",this_chnl))
-                  {
-                    timeRange
-#                    range(exprs(dataenv$data$ncfs[[sampleName]])[,this_chnl])
-                  }else{
-                    thisRange[,1]
-                  }
-
-				}
-			})
-
-
-	datarange <- t(rbind(datarange[2,]-datarange[1,],datarange))
-	pData(parameters(fr))[,c("range","minRange","maxRange")] <- datarange
-	description(fr) <- flowCore:::updateTransformKeywords(fr)
-	frmEnv[[sampleName]] <- fr
-
-    tempenv$axis.labels
-}
 
 #' Plot gates and associated cell population contained in a \code{GatingHierarchy} or \code{GatingSet}
 #'

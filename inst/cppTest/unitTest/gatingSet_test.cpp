@@ -51,7 +51,7 @@ void gh_accessor_test(GatingHierarchy& gh){
 
 
 		cout<<endl<<"compensation info"<<endl;
-		compensation comp=gh.getCompensation();
+		compensation comp=gh.get_compensation();
 		cout<<"cid:"<<comp.cid<<endl;
 		cout<<"comment:"<<comp.comment<<endl;
 		/*
@@ -116,11 +116,11 @@ void gh_accessor_test(GatingHierarchy& gh){
 		}
 }
 
-void gs_gating(GatingSet &gs,string curSample, string fcs, map<string,float> &gains){
+void gs_gating(GatingSet &gs,SampleInfo sample_info, bool is_fix_slash_in_channel_name, bool isH5, string h5_path){
 	cout<<endl<<"do the gating after the parsing"<<endl;
 
 	//read transformed data once for all nodes
-	GatingHierarchy & gh=gs.getGatingHierarchy(curSample);
+	GatingHierarchy & gh=gs.getGatingHierarchy(sample_info.uid);
 
 //	gh.loadData(curSample);//get flow data from cdf
 
@@ -128,10 +128,23 @@ void gs_gating(GatingSet &gs,string curSample, string fcs, map<string,float> &ga
 	 * read flow data from cdf into memory first (mimic the R code)
 	 */
 	FCS_READ_PARAM config;
+	config.header.is_fix_slash_in_channel_name = is_fix_slash_in_channel_name;
 
-	gh.set_frame_ptr(new MemCytoFrame(fcs, config, false));
+	CytoFrame * frm;
+	if(isH5)
+		frm = new H5CytoFrame(sample_info.fcs_path, config, false, h5_path);
+	else
+		frm = new MemCytoFrame(sample_info.fcs_path, config, false);
 
+	frm->set_pheno_data("name", sample_info.name);
+
+	gh.set_frame_ptr(frm);
 	gh.load_fdata_cache();//
+	if(sample_info.comp.marker.size()>0)
+	{
+		sample_info.comp.cid = "1";
+		gh.set_compensation(sample_info.comp);
+	}
 	gh.compensate();
 //	gh.adjustGate(gains);
 	gh.transform_gate();
@@ -213,7 +226,7 @@ void parser_test(testCase & myTest){
 	bool archiveType = myTest.archiveType;
 	string archiveName = myTest.archive;
 	map<string,float> gains = myTest.gains;
-
+	bool is_fix_slash_in_channel_name = false;
 	if(archiveType)
 		archiveName = archiveName.append(".pb");
 	else
@@ -232,16 +245,17 @@ void parser_test(testCase & myTest){
 			vector<string> sampleIDs;
 			for(map<string,string>::iterator it=myTest.samples.begin();it!=myTest.samples.end();it++)
 				sampleIDs.push_back(it->first);
-			vector<string> sampleNames;
+			vector<string> sample_uids;
 				for(map<string,string>::iterator it=myTest.samples.begin();it!=myTest.samples.end();it++)
-					sampleNames.push_back(it->second);
+					sample_uids.push_back(it->second);
 			if(isTemplate)
 				sampleIDs.erase(sampleIDs.begin());//remove the first sample,which is used for testing gating template feature
 
 			if(!isLoadArchive)
 			{
 				workspace * ws = openWorkspace(myTest.filename, myTest.sampNloc,myTest.xmlParserOption);
-				gs.reset(ws->ws2gs(sampleIDs,isParseGate,sampleNames));
+				gs.reset(ws->ws2gs(myTest.sample_info,isParseGate));
+				is_fix_slash_in_channel_name = ws->is_fix_slash_in_channel_name();
 				delete ws;
 			}
 
@@ -258,14 +272,14 @@ void parser_test(testCase & myTest){
 
 
 
-		string curSample=samples.at(0);
+		SampleInfo curSample=myTest.sample_info.at(0);
 
-		GatingHierarchy& gh=gs->getGatingHierarchy(curSample);
+		GatingHierarchy& gh=gs->getGatingHierarchy(curSample.uid);
 
 //		gh_accessor_test(gh);
 
 		if(!isLoadArchive)
-			gs_gating(*gs,curSample,myTest.fcs, gains);
+			gs_gating(*gs,curSample, is_fix_slash_in_channel_name, myTest.isH5, myTest.h5_path);
 
 		/*
 		 * recompute the gate to check if the pop indices are restored properly

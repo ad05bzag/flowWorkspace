@@ -512,49 +512,9 @@ setMethod("parseWorkspace",signature("flowJoWorkspace"),function(obj, ...){
       , sampNloc = sampNloc
       , xmlParserOption = xmlParserOption
       , isH5 = isH5
+      ,pd,execute,isNcdf
+      , ...
   )
-  
-#	message("c++ parsing done!")
-  
-  #gating
-  gs <- .addGatingHierarchies(gs,pd,execute,isNcdf, wsType = wsType, sampNloc = sampNloc, ws = ws, ...)
-  
-
-  #attach pData
-  pd <- as.data.frame(pd)
-  rownames(pd) <- pd[["guid"]] 
-  pd[["guid"]] <- NULL
-  #remove temporary columns
-  pd[["sampleID"]] <- NULL
-  pd[["nFound"]] <- NULL
-  pd[["file"]] <- NULL
-  
-  pData(gs) <- pd
-    
-  message("done!")
-
-  # It is probably unnecessary since the previous check on
-  # the $TOT keywords (through default 'keywords' argument) should be sufficient
-
-  #compare the root counts between fc and fj                  
-  #double check if the correct raw file is used 
-#   if(execute){
-#     invisible(lapply(gs, function(gh){
-#       
-#       sn <- sampleNames(gh)
-#       fj.count <- as.integer(getTotal(gh, "root", xml = T))
-#       fc.count <- as.integer(getTotal(gh, "root", xml = F))
-#       
-#       if(fj.count == -1){
-#         warning("root count for xml is not available: ", sn)
-#       }else{
-#         if(fj.count != fc.count)
-#           stop("Total event counts mismatched between flowJo and flowCore!", sn)  
-#       }        
-#       
-#     }))  
-#   }
-  
   
   #we don't want to return the splitted gs since they share the same cdf and externalptr
   #thus should be handled differently(more efficiently) from the regular gslist
