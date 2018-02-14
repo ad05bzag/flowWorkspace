@@ -28,7 +28,6 @@ GatingSet * getGsPtr(SEXP _gsPtr){
  */
 
 
-
 //[[Rcpp::export(name=".cpp_getSamples")]]
 StringVec get_sample_uids(XPtr<GatingSet> gsPtr) {
 

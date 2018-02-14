@@ -1291,7 +1291,8 @@ setMethod("getData",signature(obj="GatingSet",y="character"),function(obj,y, ...
 #' @rdname flowData
 #' @export
 setMethod("flowData",signature("GatingSet"),function(x){
-        x@data
+        as(x, "cytoSet")
+
     })
 #' @name flowData
 #' @param value The replacement \code{flowSet} or \code{ncdfFlowSet} object
