@@ -173,7 +173,7 @@ void addTrans(Rcpp::XPtr<GatingSet> gsPtr, Rcpp::S4 transformList){
 	/*
 	 * propagate to each sample
 	 */
-	StringVec sn = gsPtr->getSamples();
+	StringVec sn = gsPtr->get_sample_uids();
 	for(StringVec::iterator it = sn.begin(); it != sn.end(); it++){
 		GatingHierarchy & gh = gsPtr->getGatingHierarchy(*it);
 		gh.addTransMap(tm);
@@ -211,6 +211,6 @@ void updateChannels(Rcpp::S4 gs, Rcpp::DataFrame map){
 	for(unsigned i = 0; i < oldN.size(); i++){
 		stdmap[oldN.at(i)] = newN.at(i);
 	}
-	gsPtr->updateChannels(stdmap);
+	gsPtr->update_channels(stdmap);
 
 }

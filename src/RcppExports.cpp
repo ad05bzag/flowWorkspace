@@ -197,39 +197,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// computeGates
-void computeGates(XPtr<GatingSet> gs, string sampleName, NumericVector gainsVec, float extend_val, float extend_to);
-RcppExport SEXP _flowWorkspace_computeGates(SEXP gsSEXP, SEXP sampleNameSEXP, SEXP gainsVecSEXP, SEXP extend_valSEXP, SEXP extend_toSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gs(gsSEXP);
-    Rcpp::traits::input_parameter< string >::type sampleName(sampleNameSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type gainsVec(gainsVecSEXP);
-    Rcpp::traits::input_parameter< float >::type extend_val(extend_valSEXP);
-    Rcpp::traits::input_parameter< float >::type extend_to(extend_toSEXP);
-    computeGates(gs, sampleName, gainsVec, extend_val, extend_to);
-    return R_NilValue;
-END_RCPP
-}
-// gating
-void gating(XPtr<GatingSet> gs, string fcs, string sampleName, NumericVector gainsVec, unsigned short nodeInd, bool recompute, float extend_val, bool ignore_case, bool computeTerminalBool, float timestep);
-RcppExport SEXP _flowWorkspace_gating(SEXP gsSEXP, SEXP fcsSEXP, SEXP sampleNameSEXP, SEXP gainsVecSEXP, SEXP nodeIndSEXP, SEXP recomputeSEXP, SEXP extend_valSEXP, SEXP ignore_caseSEXP, SEXP computeTerminalBoolSEXP, SEXP timestepSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gs(gsSEXP);
-    Rcpp::traits::input_parameter< string >::type fcs(fcsSEXP);
-    Rcpp::traits::input_parameter< string >::type sampleName(sampleNameSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type gainsVec(gainsVecSEXP);
-    Rcpp::traits::input_parameter< unsigned short >::type nodeInd(nodeIndSEXP);
-    Rcpp::traits::input_parameter< bool >::type recompute(recomputeSEXP);
-    Rcpp::traits::input_parameter< float >::type extend_val(extend_valSEXP);
-    Rcpp::traits::input_parameter< bool >::type ignore_case(ignore_caseSEXP);
-    Rcpp::traits::input_parameter< bool >::type computeTerminalBool(computeTerminalBoolSEXP);
-    Rcpp::traits::input_parameter< float >::type timestep(timestepSEXP);
-    gating(gs, fcs, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep);
-    return R_NilValue;
-END_RCPP
-}
 // getGate
 List getGate(XPtr<GatingSet> gs, string sampleName, string gatePath);
 RcppExport SEXP _flowWorkspace_getGate(SEXP gsSEXP, SEXP sampleNameSEXP, SEXP gatePathSEXP) {
@@ -400,55 +367,50 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// parseWorkspace
-XPtr<GatingSet> parseWorkspace(string fileName, StringVec sampleIDs, StringVec sampleNames, bool isParseGate, unsigned short sampNloc, int xmlParserOption, bool isH5);
-RcppExport SEXP _flowWorkspace_parseWorkspace(SEXP fileNameSEXP, SEXP sampleIDsSEXP, SEXP sampleNamesSEXP, SEXP isParseGateSEXP, SEXP sampNlocSEXP, SEXP xmlParserOptionSEXP, SEXP isH5SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< string >::type fileName(fileNameSEXP);
-    Rcpp::traits::input_parameter< StringVec >::type sampleIDs(sampleIDsSEXP);
-    Rcpp::traits::input_parameter< StringVec >::type sampleNames(sampleNamesSEXP);
-    Rcpp::traits::input_parameter< bool >::type isParseGate(isParseGateSEXP);
-    Rcpp::traits::input_parameter< unsigned short >::type sampNloc(sampNlocSEXP);
-    Rcpp::traits::input_parameter< int >::type xmlParserOption(xmlParserOptionSEXP);
-    Rcpp::traits::input_parameter< bool >::type isH5(isH5SEXP);
-    rcpp_result_gen = Rcpp::wrap(parseWorkspace(fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, isH5));
-    return rcpp_result_gen;
-END_RCPP
-}
-// getSamples
-StringVec getSamples(XPtr<GatingSet> gsPtr);
-RcppExport SEXP _flowWorkspace_getSamples(SEXP gsPtrSEXP) {
+// get_cytoset
+XPtr<CytoSet> get_cytoset(XPtr<GatingSet> gsPtr);
+RcppExport SEXP _flowWorkspace_get_cytoset(SEXP gsPtrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gsPtr(gsPtrSEXP);
-    rcpp_result_gen = Rcpp::wrap(getSamples(gsPtr));
+    rcpp_result_gen = Rcpp::wrap(get_cytoset(gsPtr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_cytoset_from_node
+XPtr<CytoSet> get_cytoset_from_node(XPtr<GatingSet> gsPtr, string node);
+RcppExport SEXP _flowWorkspace_get_cytoset_from_node(SEXP gsPtrSEXP, SEXP nodeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gsPtr(gsPtrSEXP);
+    Rcpp::traits::input_parameter< string >::type node(nodeSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_cytoset_from_node(gsPtr, node));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_sample_uids
+StringVec get_sample_uids(XPtr<GatingSet> gsPtr);
+RcppExport SEXP _flowWorkspace_get_sample_uids(SEXP gsPtrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gsPtr(gsPtrSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_sample_uids(gsPtr));
     return rcpp_result_gen;
 END_RCPP
 }
 // NewGatingSet
-XPtr<GatingSet> NewGatingSet(XPtr<GatingSet> gsPtr, string sampleName, StringVec newSampleNames);
-RcppExport SEXP _flowWorkspace_NewGatingSet(SEXP gsPtrSEXP, SEXP sampleNameSEXP, SEXP newSampleNamesSEXP) {
+XPtr<GatingSet> NewGatingSet(XPtr<GatingSet> gsPtr, string src_sample_uid, StringVec new_sample_uids);
+RcppExport SEXP _flowWorkspace_NewGatingSet(SEXP gsPtrSEXP, SEXP src_sample_uidSEXP, SEXP new_sample_uidsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gsPtr(gsPtrSEXP);
-    Rcpp::traits::input_parameter< string >::type sampleName(sampleNameSEXP);
-    Rcpp::traits::input_parameter< StringVec >::type newSampleNames(newSampleNamesSEXP);
-    rcpp_result_gen = Rcpp::wrap(NewGatingSet(gsPtr, sampleName, newSampleNames));
-    return rcpp_result_gen;
-END_RCPP
-}
-// NewGatingSet_rootOnly
-XPtr<GatingSet> NewGatingSet_rootOnly(StringVec sampleNames);
-RcppExport SEXP _flowWorkspace_NewGatingSet_rootOnly(SEXP sampleNamesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< StringVec >::type sampleNames(sampleNamesSEXP);
-    rcpp_result_gen = Rcpp::wrap(NewGatingSet_rootOnly(sampleNames));
+    Rcpp::traits::input_parameter< string >::type src_sample_uid(src_sample_uidSEXP);
+    Rcpp::traits::input_parameter< StringVec >::type new_sample_uids(new_sample_uidsSEXP);
+    rcpp_result_gen = Rcpp::wrap(NewGatingSet(gsPtr, src_sample_uid, new_sample_uids));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -475,14 +437,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // CloneGatingSet
-XPtr<GatingSet> CloneGatingSet(XPtr<GatingSet> gs, StringVec samples);
-RcppExport SEXP _flowWorkspace_CloneGatingSet(SEXP gsSEXP, SEXP samplesSEXP) {
+XPtr<GatingSet> CloneGatingSet(XPtr<GatingSet> gs, StringVec new_sample_uids);
+RcppExport SEXP _flowWorkspace_CloneGatingSet(SEXP gsSEXP, SEXP new_sample_uidsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gs(gsSEXP);
-    Rcpp::traits::input_parameter< StringVec >::type samples(samplesSEXP);
-    rcpp_result_gen = Rcpp::wrap(CloneGatingSet(gs, samples));
+    Rcpp::traits::input_parameter< StringVec >::type new_sample_uids(new_sample_uidsSEXP);
+    rcpp_result_gen = Rcpp::wrap(CloneGatingSet(gs, new_sample_uids));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -498,44 +460,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// setSample
-void setSample(XPtr<GatingSet> gs, string oldName, string newName);
-RcppExport SEXP _flowWorkspace_setSample(SEXP gsSEXP, SEXP oldNameSEXP, SEXP newNameSEXP) {
+// set_sample_uid
+void set_sample_uid(XPtr<GatingSet> gs, string oldName, string newName);
+RcppExport SEXP _flowWorkspace_set_sample_uid(SEXP gsSEXP, SEXP oldNameSEXP, SEXP newNameSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gs(gsSEXP);
     Rcpp::traits::input_parameter< string >::type oldName(oldNameSEXP);
     Rcpp::traits::input_parameter< string >::type newName(newNameSEXP);
-    setSample(gs, oldName, newName);
-    return R_NilValue;
-END_RCPP
-}
-// getLogLevel
-unsigned short getLogLevel();
-RcppExport SEXP _flowWorkspace_getLogLevel() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(getLogLevel());
-    return rcpp_result_gen;
-END_RCPP
-}
-// setLogLevel
-void setLogLevel(unsigned short loglevel);
-RcppExport SEXP _flowWorkspace_setLogLevel(SEXP loglevelSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< unsigned short >::type loglevel(loglevelSEXP);
-    setLogLevel(loglevel);
-    return R_NilValue;
-END_RCPP
-}
-// toggleErrorFlag
-void toggleErrorFlag();
-RcppExport SEXP _flowWorkspace_toggleErrorFlag() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    toggleErrorFlag();
+    set_sample_uid(gs, oldName, newName);
     return R_NilValue;
 END_RCPP
 }
@@ -568,8 +501,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_flowWorkspace_getPopStats", (DL_FUNC) &_flowWorkspace_getPopStats, 3},
     {"_flowWorkspace_getCompensation", (DL_FUNC) &_flowWorkspace_getCompensation, 2},
     {"_flowWorkspace_getTransformations", (DL_FUNC) &_flowWorkspace_getTransformations, 3},
-    {"_flowWorkspace_computeGates", (DL_FUNC) &_flowWorkspace_computeGates, 5},
-    {"_flowWorkspace_gating", (DL_FUNC) &_flowWorkspace_gating, 10},
     {"_flowWorkspace_getGate", (DL_FUNC) &_flowWorkspace_getGate, 3},
     {"_flowWorkspace_getIndices", (DL_FUNC) &_flowWorkspace_getIndices, 3},
     {"_flowWorkspace_setIndices", (DL_FUNC) &_flowWorkspace_setIndices, 4},
@@ -583,18 +514,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_flowWorkspace_moveNode", (DL_FUNC) &_flowWorkspace_moveNode, 4},
     {"_flowWorkspace_setNodeName", (DL_FUNC) &_flowWorkspace_setNodeName, 4},
     {"_flowWorkspace_setNodeFlag", (DL_FUNC) &_flowWorkspace_setNodeFlag, 4},
-    {"_flowWorkspace_parseWorkspace", (DL_FUNC) &_flowWorkspace_parseWorkspace, 7},
-    {"_flowWorkspace_getSamples", (DL_FUNC) &_flowWorkspace_getSamples, 1},
+    {"_flowWorkspace_get_cytoset", (DL_FUNC) &_flowWorkspace_get_cytoset, 1},
+    {"_flowWorkspace_get_cytoset_from_node", (DL_FUNC) &_flowWorkspace_get_cytoset_from_node, 2},
+    {"_flowWorkspace_get_sample_uids", (DL_FUNC) &_flowWorkspace_get_sample_uids, 1},
     {"_flowWorkspace_NewGatingSet", (DL_FUNC) &_flowWorkspace_NewGatingSet, 3},
-    {"_flowWorkspace_NewGatingSet_rootOnly", (DL_FUNC) &_flowWorkspace_NewGatingSet_rootOnly, 1},
     {"_flowWorkspace_saveGatingSet", (DL_FUNC) &_flowWorkspace_saveGatingSet, 2},
     {"_flowWorkspace_loadGatingSet", (DL_FUNC) &_flowWorkspace_loadGatingSet, 1},
     {"_flowWorkspace_CloneGatingSet", (DL_FUNC) &_flowWorkspace_CloneGatingSet, 2},
     {"_flowWorkspace_combineGatingSet", (DL_FUNC) &_flowWorkspace_combineGatingSet, 2},
-    {"_flowWorkspace_setSample", (DL_FUNC) &_flowWorkspace_setSample, 3},
-    {"_flowWorkspace_getLogLevel", (DL_FUNC) &_flowWorkspace_getLogLevel, 0},
-    {"_flowWorkspace_setLogLevel", (DL_FUNC) &_flowWorkspace_setLogLevel, 1},
-    {"_flowWorkspace_toggleErrorFlag", (DL_FUNC) &_flowWorkspace_toggleErrorFlag, 0},
+    {"_flowWorkspace_set_sample_uid", (DL_FUNC) &_flowWorkspace_set_sample_uid, 3},
     {"_flowWorkspace_setCounts", (DL_FUNC) &_flowWorkspace_setCounts, 4},
     {NULL, NULL, 0}
 };

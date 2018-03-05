@@ -71,7 +71,7 @@ NULL
 #' @exportClass GatingSet
 #' @aliases 
 #' GatingSet-class
-setClass("GatingSet", contains = "cytoSet", representation(transformation = "list"))
+setClass("GatingSet", representation(pointer = "externalptr", transformation = "list"))
 
 #' Class GatingHierarchy
 #' 
@@ -121,13 +121,14 @@ setGeneric("GatingSet",function(x,y,...)standardGeneric("GatingSet"))
 #' construct a gatingset with empty trees (just root node)
 #' 
 #' @rdname GatingSet-methods
+#' @importClassesFrom flowCore cytoSet
 #' @export 
 #' @examples 
 #' \dontrun{
 #' #fdata could be a flowSet or ncdfFlowSet
 #' gs <- GatingSet(fdata)
 #' }
-setMethod("GatingSet",c("CytoSet"),function(x){
+setMethod("GatingSet",c("cytoSet"),function(x){
       
       new("GatingSet", pointer = x@pointer)
       

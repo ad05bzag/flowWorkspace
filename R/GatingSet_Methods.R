@@ -1260,19 +1260,8 @@ setMethod("getData",signature(obj="GatingSet",y="missing"),function(obj,y, ...){
 #' @export
 setMethod("getData",signature(obj="GatingSet",y="character"),function(obj,y, ...){
 
-      this_data <- getData(obj, ...)
-      if(y == "root"){
-        this_data
-      }else{
-        #subset by indices
-        indices<-lapply(obj,getIndices,y)
-        if(class(this_data) == "ncdfFlowSet")
-          this_data <- Subset(this_data,indices, validityCheck = FALSE)
-        else
-          this_data <- Subset(this_data,indices)
-        this_data
-      }
-
+      cs <- new("cytoSet", pointer = get_cytoset_from_node(obj@pointer, y))
+      cs[,...]
 
 		})
 
@@ -1291,7 +1280,7 @@ setMethod("getData",signature(obj="GatingSet",y="character"),function(obj,y, ...
 #' @rdname flowData
 #' @export
 setMethod("flowData",signature("GatingSet"),function(x){
-        as(x, "cytoSet")
+        new("cytoSet", pointer = get_cytoset(x@pointer))
 
     })
 #' @name flowData
@@ -1444,17 +1433,9 @@ setMethod("[[",c(x="GatingSet",i="logical"),function(x,i,j,...){
 
     })
 setMethod("[[",c(x="GatingSet",i="character"),function(x,i,j,...){
-      data <- x@data
-      if(is.null(data))
-        data <- new("flowSet")
       #new takes less time than as method
       new("GatingHierarchy", pointer = x@pointer
-                            , data = data
-                            , flag = x@flag
-                            , axis = x@axis
-                            , guid = x@guid
-                            , transformation = x@transformation
-                            , compensation = x@compensation
+                              , transformation = x@transformation
                             , name = i)
 
     })

@@ -7,13 +7,12 @@
  *      Author: wjiang2
  */
 
-#include "flowWorkspace/openWorkspace.hpp"
+#include "cytolib/GatingSet.hpp"
 #include <Rcpp.h>
 using namespace Rcpp;
 using namespace cytolib;
-using namespace cytoml;
+
 CYTOLIB_INIT()
-CYTOML_INIT()
 
 GatingSet * getGsPtr(SEXP _gsPtr){
 
@@ -27,6 +26,17 @@ GatingSet * getGsPtr(SEXP _gsPtr){
  * can't use module for exposing overloaded methods
  */
 
+//[[Rcpp::export]]
+XPtr<CytoSet> get_cytoset(XPtr<GatingSet> gsPtr) {
+  
+  return XPtr<CytoSet>(new CytoSet(gsPtr->get_cytoset()));
+}
+
+//[[Rcpp::export]]
+XPtr<CytoSet> get_cytoset_from_node(XPtr<GatingSet> gsPtr, string node) {
+  
+  return XPtr<CytoSet>(new CytoSet(gsPtr->get_cytoset(node)));
+}
 
 //[[Rcpp::export(name=".cpp_getSamples")]]
 StringVec get_sample_uids(XPtr<GatingSet> gsPtr) {
@@ -58,19 +68,6 @@ XPtr<GatingSet> NewGatingSet(XPtr<GatingSet> gsPtr
 		return XPtr<GatingSet>(newGS);
 
 }
-
-/*
- * constructing GatingSet with only root node for each sample
- */
-//[[Rcpp::export(name=".cpp_NewGatingSet_rootOnly")]]
-XPtr<GatingSet> NewGatingSet_rootOnly(StringVec new_sample_uids) {
-
-		GatingSet * newGS=new GatingSet(new_sample_uids);
-
-		return XPtr<GatingSet>(newGS);
-
-}
-
 /*
  * save/load GatingSet
  */
@@ -120,7 +117,7 @@ XPtr<GatingSet> combineGatingSet(Rcpp::List gsList,Rcpp::List sampleList) {
 //[[Rcpp::export(name=".cpp_setSample")]]
 void set_sample_uid(XPtr<GatingSet> gs,string oldName, string newName) {
 	
-		gs->setSample(oldName,newName);
+		gs->set_sample_uid(oldName,newName);
 
 }
 

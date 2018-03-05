@@ -96,14 +96,6 @@
     .Call(`_flowWorkspace_getTransformations`, gs, sampleName, inverse)
 }
 
-.cpp_computeGates <- function(gs, sampleName, gainsVec, extend_val, extend_to) {
-    invisible(.Call(`_flowWorkspace_computeGates`, gs, sampleName, gainsVec, extend_val, extend_to))
-}
-
-.cpp_gating <- function(gs, fcs, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep) {
-    invisible(.Call(`_flowWorkspace_gating`, gs, fcs, sampleName, gainsVec, nodeInd, recompute, extend_val, ignore_case, computeTerminalBool, timestep))
-}
-
 .cpp_getGate <- function(gs, sampleName, gatePath) {
     .Call(`_flowWorkspace_getGate`, gs, sampleName, gatePath)
 }
@@ -164,20 +156,20 @@
     invisible(.Call(`_flowWorkspace_setNodeFlag`, gs, sampleName, gatePath, hidden))
 }
 
-.cpp_parseWorkspace <- function(fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, isH5) {
-    .Call(`_flowWorkspace_parseWorkspace`, fileName, sampleIDs, sampleNames, isParseGate, sampNloc, xmlParserOption, isH5)
+get_cytoset <- function(gsPtr) {
+    .Call(`_flowWorkspace_get_cytoset`, gsPtr)
+}
+
+get_cytoset_from_node <- function(gsPtr, node) {
+    .Call(`_flowWorkspace_get_cytoset_from_node`, gsPtr, node)
 }
 
 .cpp_getSamples <- function(gsPtr) {
-    .Call(`_flowWorkspace_getSamples`, gsPtr)
+    .Call(`_flowWorkspace_get_sample_uids`, gsPtr)
 }
 
-.cpp_NewGatingSet <- function(gsPtr, sampleName, newSampleNames) {
-    .Call(`_flowWorkspace_NewGatingSet`, gsPtr, sampleName, newSampleNames)
-}
-
-.cpp_NewGatingSet_rootOnly <- function(sampleNames) {
-    .Call(`_flowWorkspace_NewGatingSet_rootOnly`, sampleNames)
+.cpp_NewGatingSet <- function(gsPtr, src_sample_uid, new_sample_uids) {
+    .Call(`_flowWorkspace_NewGatingSet`, gsPtr, src_sample_uid, new_sample_uids)
 }
 
 .cpp_saveGatingSet <- function(gs, fileName) {
@@ -188,8 +180,8 @@
     .Call(`_flowWorkspace_loadGatingSet`, fileName)
 }
 
-.cpp_CloneGatingSet <- function(gs, samples) {
-    .Call(`_flowWorkspace_CloneGatingSet`, gs, samples)
+.cpp_CloneGatingSet <- function(gs, new_sample_uids) {
+    .Call(`_flowWorkspace_CloneGatingSet`, gs, new_sample_uids)
 }
 
 .cpp_combineGatingSet <- function(gsList, sampleList) {
@@ -197,19 +189,7 @@
 }
 
 .cpp_setSample <- function(gs, oldName, newName) {
-    invisible(.Call(`_flowWorkspace_setSample`, gs, oldName, newName))
-}
-
-.cpp_getLogLevel <- function() {
-    .Call(`_flowWorkspace_getLogLevel`)
-}
-
-.cpp_setLogLevel <- function(loglevel) {
-    invisible(.Call(`_flowWorkspace_setLogLevel`, loglevel))
-}
-
-.cpp_togleErrorFlag <- function() {
-    invisible(.Call(`_flowWorkspace_toggleErrorFlag`))
+    invisible(.Call(`_flowWorkspace_set_sample_uid`, gs, oldName, newName))
 }
 
 #' set the event counts for a given node

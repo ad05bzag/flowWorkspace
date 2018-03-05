@@ -111,7 +111,7 @@ List getPopStats(XPtr<GatingSet> gs,string sampleName
 //[[Rcpp::export(name=".cpp_getCompensation")]]
 List getCompensation(XPtr<GatingSet> gs,string sampleName){
   GatingHierarchy & gh=gs->getGatingHierarchy(sampleName);
-  compensation comp=gh.getCompensation();
+  compensation comp=gh.get_compensation();
 	return(List::create(Named("cid",comp.cid)
 						,Named("prefix",comp.prefix)
 						,Named("suffix",comp.suffix)
@@ -378,7 +378,16 @@ vector<bool> getIndices(XPtr<GatingSet> gs,string sampleName,string gatePath){
 	nodeProperties & node = gh.getNodeProperty(u);
 	//gate for this particular node in case it is not gated(e.g. indices of bool gate is not archived, thus needs the lazy-gating)
 	if(u>0&&!node.isGated())
-		gh.gating(u);
+	{
+		if(node.getGate()->getType()==BOOLGATE)
+		{
+			MemCytoFrame fr;
+			gh.gating(fr, u);//pass dummy frame since boolgating doesn't need it once the initial gating was completed thus all the ref nodes are guaranteed to be gated
+		}
+
+
+	}
+
 	return node.getIndices();
 
 
@@ -640,7 +649,8 @@ void boolGating(XPtr<GatingSet> gs,string sampleName,List filter,unsigned nodeID
 		//parse boolean expression from R data structure into c++
 		vector<BOOL_GATE_OP> boolOp = boolFilter_R_to_C(filter);
 		//perform bool gating
-		vector<bool> curIndices= gh.boolGating(boolOp, true);
+		MemCytoFrame fr;
+		vector<bool> curIndices= gh.boolGating(fr, boolOp, true);//pass dummy frame since boolgating doesn't need it in openCyto where all the ref nodes are guaranteed to be gated
 		//combine with parent indices
 		nodeProperties & parentNode=gh.getNodeProperty(gh.getParent(nodeID));
 		transform (curIndices.begin(), curIndices.end(), parentNode.getIndices().begin(), curIndices.begin(),logical_and<bool>());
