@@ -414,25 +414,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// saveGatingSet
-void saveGatingSet(XPtr<GatingSet> gs, string fileName);
-RcppExport SEXP _flowWorkspace_saveGatingSet(SEXP gsSEXP, SEXP fileNameSEXP) {
+// save_gatingset
+void save_gatingset(XPtr<GatingSet> gs, string path, bool overwrite, string cdf);
+RcppExport SEXP _flowWorkspace_save_gatingset(SEXP gsSEXP, SEXP pathSEXP, SEXP overwriteSEXP, SEXP cdfSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< XPtr<GatingSet> >::type gs(gsSEXP);
-    Rcpp::traits::input_parameter< string >::type fileName(fileNameSEXP);
-    saveGatingSet(gs, fileName);
+    Rcpp::traits::input_parameter< string >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< string >::type cdf(cdfSEXP);
+    save_gatingset(gs, path, overwrite, cdf);
     return R_NilValue;
 END_RCPP
 }
-// loadGatingSet
-XPtr<GatingSet> loadGatingSet(string fileName);
-RcppExport SEXP _flowWorkspace_loadGatingSet(SEXP fileNameSEXP) {
+// load_gatingset
+XPtr<GatingSet> load_gatingset(string path);
+RcppExport SEXP _flowWorkspace_load_gatingset(SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< string >::type fileName(fileNameSEXP);
-    rcpp_result_gen = Rcpp::wrap(loadGatingSet(fileName));
+    Rcpp::traits::input_parameter< string >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(load_gatingset(path));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -518,8 +520,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_flowWorkspace_get_cytoset_from_node", (DL_FUNC) &_flowWorkspace_get_cytoset_from_node, 2},
     {"_flowWorkspace_get_sample_uids", (DL_FUNC) &_flowWorkspace_get_sample_uids, 1},
     {"_flowWorkspace_NewGatingSet", (DL_FUNC) &_flowWorkspace_NewGatingSet, 3},
-    {"_flowWorkspace_saveGatingSet", (DL_FUNC) &_flowWorkspace_saveGatingSet, 2},
-    {"_flowWorkspace_loadGatingSet", (DL_FUNC) &_flowWorkspace_loadGatingSet, 1},
+    {"_flowWorkspace_save_gatingset", (DL_FUNC) &_flowWorkspace_save_gatingset, 4},
+    {"_flowWorkspace_load_gatingset", (DL_FUNC) &_flowWorkspace_load_gatingset, 1},
     {"_flowWorkspace_CloneGatingSet", (DL_FUNC) &_flowWorkspace_CloneGatingSet, 2},
     {"_flowWorkspace_combineGatingSet", (DL_FUNC) &_flowWorkspace_combineGatingSet, 2},
     {"_flowWorkspace_set_sample_uid", (DL_FUNC) &_flowWorkspace_set_sample_uid, 3},

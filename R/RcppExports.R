@@ -172,12 +172,12 @@ get_cytoset_from_node <- function(gsPtr, node) {
     .Call(`_flowWorkspace_NewGatingSet`, gsPtr, src_sample_uid, new_sample_uids)
 }
 
-.cpp_saveGatingSet <- function(gs, fileName) {
-    invisible(.Call(`_flowWorkspace_saveGatingSet`, gs, fileName))
+save_gatingset <- function(gs, path, overwrite, cdf) {
+    invisible(.Call(`_flowWorkspace_save_gatingset`, gs, path, overwrite, cdf))
 }
 
-.cpp_loadGatingSet <- function(fileName) {
-    .Call(`_flowWorkspace_loadGatingSet`, fileName)
+.cpp_loadGatingSet <- function(path) {
+    .Call(`_flowWorkspace_load_gatingset`, path)
 }
 
 .cpp_CloneGatingSet <- function(gs, new_sample_uids) {
