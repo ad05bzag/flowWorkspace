@@ -27,6 +27,12 @@ GatingSet * getGsPtr(SEXP _gsPtr){
  */
 
 //[[Rcpp::export]]
+XPtr<CytoSet> subset_gs_by_sample(XPtr<GatingSet> gsPtr, vector<string> samples) {
+  
+  return XPtr<CytoSet>(new CytoSet(gsPtr->get_cytoset(node)));
+}
+
+//[[Rcpp::export]]
 XPtr<CytoSet> get_cytoset(XPtr<GatingSet> gsPtr) {
   
   return XPtr<CytoSet>(new CytoSet(gsPtr->get_cytoset()));

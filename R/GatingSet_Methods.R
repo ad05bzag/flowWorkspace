@@ -1088,18 +1088,7 @@ setMethod("[",c("GatingSet"),function(x,i,j,...,drop){
             if(extends(class(i), "numeric")||class(i) == "logical"){
               i <- sampleNames(x)[i]
             }
-
-            #copy the R structure
-            clone <- x
-            clone@axis <- clone@axis[i]
-            #subsetting data
-			fs <- flowData(clone)[i]
-
-
-            #update the data for clone
-            flowData(clone) <- fs
-            clone@guid <- .uuid_gen()
-			return(clone);
+            new("GatingSet", pointer = subset_gs_by_sample(x@pointer, i))
 		})
 
 #' subset the GatingSet/GatingSetList based on 'pData'
@@ -1163,9 +1152,7 @@ setMethod("[[",c(x="GatingSet",i="logical"),function(x,i,j,...){
     })
 setMethod("[[",c(x="GatingSet",i="character"),function(x,i,j,...){
       #new takes less time than as method
-      new("GatingHierarchy", pointer = x@pointer
-                              , transformation = x@transformation
-                            , name = i)
+      as(x[i], "GatingHierarchy")
 
     })
 

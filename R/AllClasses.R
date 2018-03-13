@@ -106,11 +106,7 @@ setClass("GatingSet", representation(pointer = "externalptr", transformation = "
 #' @exportClass GatingHierarchy
 #' @aliases 
 #' show,GatingHierarchy-method
-setClass("GatingHierarchy"
-          , contains = "GatingSet"
-          , representation(name = "character")
-          , prototype(name = "")
-        )
+setClass("GatingHierarchy", contains = "GatingSet")
 
 
 
